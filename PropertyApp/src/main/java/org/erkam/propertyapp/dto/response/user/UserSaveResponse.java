@@ -1,4 +1,4 @@
-package org.erkam.propertyapp.dto.response;
+package org.erkam.propertyapp.dto.response.user;
 
 import lombok.Builder;
 import lombok.Getter;
