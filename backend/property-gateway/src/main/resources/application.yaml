@@ -1,0 +1,13 @@
+
+spring:
+  application:
+    name: property-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: property-service
+          uri: lb://PROPERTY-SERVICE
+          predicates:
+            - Path=/api/v1/users/**, /api/v1/listings/**
+server:
+  port: 8080
