@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyapp.constants.LogMessage;
 import org.erkam.propertyapp.constants.UserSuccessMessage;
 import org.erkam.propertyapp.constants.enums.MessageStatus;
-import org.erkam.propertyapp.dto.request.UserSaveRequest;
+import org.erkam.propertyapp.dto.request.user.UserSaveRequest;
 import org.erkam.propertyapp.dto.converter.UserConverter;
 import org.erkam.propertyapp.dto.response.GenericResponse;
 import org.erkam.propertyapp.dto.response.user.UserDeleteResponse;

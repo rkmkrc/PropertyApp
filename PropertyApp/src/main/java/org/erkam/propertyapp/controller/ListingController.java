@@ -4,28 +4,29 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.erkam.propertyapp.dto.request.user.UserSaveRequest;
+import org.erkam.propertyapp.dto.request.listing.ListingSaveRequest;
 import org.erkam.propertyapp.dto.response.GenericResponse;
+import org.erkam.propertyapp.dto.response.listing.ListingDeleteResponse;
+import org.erkam.propertyapp.dto.response.listing.ListingGetResponse;
+import org.erkam.propertyapp.dto.response.listing.ListingSaveResponse;
 import org.erkam.propertyapp.dto.response.user.UserDeleteResponse;
-import org.erkam.propertyapp.dto.response.user.UserGetResponse;
-import org.erkam.propertyapp.dto.response.user.UserSaveResponse;
-import org.erkam.propertyapp.service.UserService;
+import org.erkam.propertyapp.service.ListingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "User")
+@Tag(name = "Listing")
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/listings")
 @RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+public class ListingController {
+    private final ListingService listingService;
 
     @Operation(
-            description = "Post endpoint to create a user.",
-            summary = "Create a user.",
+            description = "Post endpoint to create a listing.",
+            summary = "Create a listing.",
             responses = {
                     @ApiResponse(
                             description = "Created.",
@@ -42,13 +43,13 @@ public class UserController {
             }
     )
     @PostMapping
-    public ResponseEntity<GenericResponse<UserSaveResponse>> save(@RequestBody UserSaveRequest request) {
-        return new ResponseEntity<>(userService.save(request), HttpStatus.CREATED);
+    public ResponseEntity<GenericResponse<ListingSaveResponse>> save(@RequestBody ListingSaveRequest request) {
+        return new ResponseEntity<>(listingService.save(request), HttpStatus.CREATED);
     }
 
     @Operation(
-            description = "Get endpoint to fetch all users.",
-            summary = "Get all users.",
+            description = "Get endpoint to fetch all listings.",
+            summary = "Get all listings.",
             responses = {
                     @ApiResponse(
                             description = "Success.",
@@ -65,13 +66,13 @@ public class UserController {
             }
     )
     @GetMapping
-    public ResponseEntity<GenericResponse<List<UserGetResponse>>> getAll() {
-        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getAll() {
+        return new ResponseEntity<>(listingService.getAll(), HttpStatus.OK);
     }
 
     @Operation(
-            description = "Get endpoint to fetch a user by id.",
-            summary = "Get a user.",
+            description = "Get endpoint to fetch a listing by id.",
+            summary = "Get a listing.",
             responses = {
                     @ApiResponse(
                             description = "Success.",
@@ -88,13 +89,13 @@ public class UserController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<GenericResponse<UserGetResponse>> getById(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
+    public ResponseEntity<GenericResponse<ListingGetResponse>> getById(@PathVariable Long id) {
+        return new ResponseEntity<>(listingService.getById(id), HttpStatus.OK);
     }
 
     @Operation(
-            description = "Delete endpoint for a user.",
-            summary = "Delete a user by id.",
+            description = "Delete endpoint for a listing.",
+            summary = "Delete a listing by id.",
             responses = {
                     @ApiResponse(
                             description = "Success.",
@@ -111,7 +112,7 @@ public class UserController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<GenericResponse<UserDeleteResponse>> deleteById(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.deleteById(id), HttpStatus.OK);
+    public ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteById(@PathVariable Long id) {
+        return new ResponseEntity<>(listingService.deleteById(id), HttpStatus.OK);
     }
 }

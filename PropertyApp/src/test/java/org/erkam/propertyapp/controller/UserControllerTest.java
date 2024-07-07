@@ -1,7 +1,7 @@
 package org.erkam.propertyapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.erkam.propertyapp.dto.request.UserSaveRequest;
+import org.erkam.propertyapp.dto.request.user.UserSaveRequest;
 import org.erkam.propertyapp.dto.response.GenericResponse;
 import org.erkam.propertyapp.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyapp.dto.response.user.UserGetResponse;

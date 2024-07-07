@@ -3,7 +3,7 @@ package org.erkam.propertyapp.dto.response.user;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.erkam.propertyapp.dto.request.UserSaveRequest;
+import org.erkam.propertyapp.dto.request.user.UserSaveRequest;
 
 @Getter
 @Setter
@@ -13,9 +13,10 @@ public class UserSaveResponse {
     public static UserSaveResponse of(UserSaveRequest request) {
         return UserSaveResponse.builder()
                 .responseMessage(
-                        "User created successfully. Name: " + request.getName()
-                        + ", Surname: " + request.getSurname()
-                        + ", Email: " + request.getEmail())
+                        "User created successfully."
+                                + " Name: " + request.getName()
+                                + ", Surname: " + request.getSurname()
+                                + ", Email: " + request.getEmail())
                 .build();
     }
 }

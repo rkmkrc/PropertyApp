@@ -1,11 +1,7 @@
 package org.erkam.propertyapp.service;
 
-import org.erkam.propertyapp.constants.LogMessage;
 import org.erkam.propertyapp.constants.PropertyAppConstants;
-import org.erkam.propertyapp.constants.UserSuccessMessage;
-import org.erkam.propertyapp.constants.enums.MessageStatus;
-import org.erkam.propertyapp.dto.converter.UserConverter;
-import org.erkam.propertyapp.dto.request.UserSaveRequest;
+import org.erkam.propertyapp.dto.request.user.UserSaveRequest;
 import org.erkam.propertyapp.dto.response.GenericResponse;
 import org.erkam.propertyapp.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyapp.dto.response.user.UserGetResponse;
@@ -42,7 +38,7 @@ class UserServiceTest {
     }
 
     @Test
-    void save() {
+    void save_success() {
         UserSaveRequest request = Instancio.of(UserSaveRequest.class).create();
         request.setEmail("test@example.com");
 
@@ -57,7 +53,7 @@ class UserServiceTest {
     }
 
     @Test
-    void save_userAlreadyExists() {
+    void save_shouldThrowException_whenUserAlreadyExists() {
         UserSaveRequest request = Instancio.of(UserSaveRequest.class).create();
         request.setEmail("existing@example.com");
 
@@ -72,7 +68,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getAll() {
+    void getAll_success() {
         List<User> users = new ArrayList<>();
         users.add(new User());
 
@@ -87,7 +83,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getAll_noData() {
+    void getAll_shouldThrowException_whenNoDataExists() {
         when(userRepository.findAll()).thenReturn(new ArrayList<>());
 
         UserException.NoDataOnDatabaseException exception = assertThrows(UserException.NoDataOnDatabaseException.class, () -> {
@@ -99,7 +95,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getById() {
+    void getById_success() {
         Long userId = 1L;
         User user = new User();
         user.setEmail("test@example.com");
@@ -115,7 +111,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getById_userNotFound() {
+    void getById_shouldThrowException_whenUserNotFound() {
         Long userId = 1L;
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -129,7 +125,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteById() {
+    void deleteById_success() {
         Long userId = 1L;
         User user = new User();
         user.setEmail("test@example.com");
@@ -146,7 +142,7 @@ class UserServiceTest {
     }
 
     @Test
-    void deleteById_userNotFound() {
+    void deleteById_shouldThrowException_whenUserNotFound() {
         Long userId = 1L;
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());

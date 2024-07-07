@@ -1,7 +1,6 @@
 package org.erkam.propertyapp.dto.converter;
 
-import org.erkam.propertyapp.dto.request.UserSaveRequest;
-import org.erkam.propertyapp.dto.response.user.UserDeleteResponse;
+import org.erkam.propertyapp.dto.request.user.UserSaveRequest;
 import org.erkam.propertyapp.dto.response.user.UserGetResponse;
 import org.erkam.propertyapp.model.User;
 

@@ -13,7 +13,8 @@ public class UserDeleteResponse {
     public static UserDeleteResponse of(User user) {
         return UserDeleteResponse.builder()
                 .responseMessage(
-                        "User deleted successfully. Name: " + user.getName()
+                        "User deleted successfully."
+                                + " Name: " + user.getName()
                                 + ", Surname: " + user.getSurname()
                                 + ", Email: " + user.getEmail())
                 .build();
