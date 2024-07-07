@@ -25,11 +25,15 @@ import java.util.List;
 public class ListingService {
     private final ListingRepository listingRepository;
 
-    // TODO: Implement a check mechanism to know is there any duplicate
-    //  of this listing in database
+    // Check if there is a duplicate listing exists or not, if exists then throw an exception
+    // else save it return a ListingSaveResponse
     public GenericResponse<ListingSaveResponse> save(ListingSaveRequest request) {
-        // TODO: Check here and throw an exception if any duplicate exists
-        listingRepository.save(ListingConverter.toListing(request));
+        Listing listing = ListingConverter.toListing(request);
+        if (isDuplicate(listing)) {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle()));
+            throw new ListingException.DuplicateListingException(ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle());
+        }
+        listingRepository.save(listing);
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_CREATED, request.getTitle()));
         return GenericResponse.success(ListingSaveResponse.of(request));
     }
@@ -68,5 +72,18 @@ public class ListingService {
         listingRepository.delete(listing);
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_DELETED, listing.getId()));
         return GenericResponse.success(ListingDeleteResponse.of(listing));
+    }
+
+    // This method checks for a duplicate listing in repository
+    // returns true if give listing parameter is exactly the same except the id field of a listing.
+    private boolean isDuplicate(Listing listing) {
+        return listingRepository.findByTitleAndPriceAndAreaAndDescriptionAndTypeAndStatus(
+                listing.getTitle(),
+                listing.getPrice(),
+                listing.getArea(),
+                listing.getDescription(),
+                listing.getType(),
+                listing.getStatus()
+        ).isPresent();
     }
 }

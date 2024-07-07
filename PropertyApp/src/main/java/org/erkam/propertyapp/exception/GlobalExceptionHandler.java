@@ -1,6 +1,7 @@
 package org.erkam.propertyapp.exception;
 
 import org.erkam.propertyapp.error.ErrorDetails;
+import org.erkam.propertyapp.exception.listing.ListingException;
 import org.erkam.propertyapp.exception.user.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,30 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleNoDataOnDatabaseException(UserException.NoDataOnDatabaseException exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ListingException.ListingAlreadyExistException.class)
+    public ResponseEntity<?> handleListingAlreadyExistsException(ListingException.ListingAlreadyExistException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ListingException.ListingNotFoundException.class)
+    public ResponseEntity<?> handleListingNotFoundException(ListingException.ListingNotFoundException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ListingException.NoDataOnDatabaseException.class)
+    public ResponseEntity<?> handleNoDataOnDatabaseException(ListingException.NoDataOnDatabaseException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ListingException.DuplicateListingException.class)
+    public ResponseEntity<?> handleDuplicateListingException(ListingException.DuplicateListingException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

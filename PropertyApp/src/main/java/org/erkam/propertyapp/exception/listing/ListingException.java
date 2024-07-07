@@ -16,5 +16,9 @@ public class ListingException extends RuntimeException {
     public static class ListingNotFoundException extends ListingException {
         public ListingNotFoundException(String message, Long id) { super(message + " with id: " + id); }
     }
+
+    public static class DuplicateListingException extends ListingException {
+        public DuplicateListingException(String message, String title) { super(message + " with title: " + title); }
+    }
 }
 
