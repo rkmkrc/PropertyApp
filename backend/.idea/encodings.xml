@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$/property-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/property-registry/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/property-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/property-user-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

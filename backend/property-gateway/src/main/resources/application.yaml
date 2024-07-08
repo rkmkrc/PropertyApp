@@ -8,6 +8,10 @@ spring:
         - id: property-service
           uri: lb://PROPERTY-SERVICE
           predicates:
-            - Path=/api/v1/users/**, /api/v1/listings/**
+            - Path=/api/v1/listings/**
+        - id: property-user-service
+          uri: lb://PROPERTY-USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**
 server:
   port: 8080
