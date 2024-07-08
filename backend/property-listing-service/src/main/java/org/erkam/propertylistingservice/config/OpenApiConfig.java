@@ -1,4 +1,4 @@
-package org.erkam.propertyuserservice.config;
+package org.erkam.propertylistingservice.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         email = "erkamkaracaa@gmail.com",
                         url = "https://erkamkaraca.com"
                 ),
-                description = "OpenApi Documentation for User Microservice of Property App.",
+                description = "OpenApi Documentation for Listing Microservice of Property App.",
                 title = "API Documentation of Property App© - Erkam Karaca",
                 version = "1,0",
                 license = @License(

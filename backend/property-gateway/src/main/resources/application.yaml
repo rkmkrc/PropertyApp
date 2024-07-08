@@ -5,8 +5,8 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: property-service
-          uri: lb://PROPERTY-SERVICE
+        - id: property-listing-service
+          uri: lb://PROPERTY-LISTING-SERVICE
           predicates:
             - Path=/api/v1/listings/**
         - id: property-user-service
