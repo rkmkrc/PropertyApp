@@ -14,9 +14,13 @@
         <module name="property-registry" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="property-auth-service" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="property-auth-service" options="-parameters" />
       <module name="property-gateway" options="-parameters" />
       <module name="property-listing-service" options="-parameters" />
       <module name="property-registry" options="-parameters" />

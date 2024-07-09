@@ -17,6 +17,8 @@ public class UserException extends RuntimeException {
 
     public static class UserNotFoundException extends UserException {
         public UserNotFoundException(String message, Long id) { super(message + " with id: " + id); }
+        public UserNotFoundException(String message, String email) { super(message + " with email: " + email); }
+
     }
 }
 

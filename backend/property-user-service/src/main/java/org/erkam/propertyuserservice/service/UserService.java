@@ -6,6 +6,7 @@ import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.UserSuccessMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
 import org.erkam.propertyuserservice.dto.converter.UserConverter;
+import org.erkam.propertyuserservice.dto.request.auth.RegisterRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
@@ -15,6 +16,7 @@ import org.erkam.propertyuserservice.exception.user.UserException;
 import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.erkam.propertyuserservice.model.User;
 import org.erkam.propertyuserservice.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+
+    // First check by email, to find out whether user exists or not,
+    // if not exists then save if exists then throw an exception.
+    public User register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_ALREADY_EXISTS, request.getEmail()));
+            throw new UserException.UserAlreadyExistException(UserExceptionMessage.USER_ALREADY_EXISTS, request.getEmail());
+        }
+        User user = UserConverter.toUser(request);
+        userRepository.save(user);
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.USER_CREATED, request.getEmail()));
+        return user;
+    }
 
     // First check by email, to find out whether user exists or not,
     // if not exists then save if exists then throw an exception.
@@ -58,6 +73,17 @@ public class UserService {
         });
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.USER_FETCHED, user.getEmail()));
         return GenericResponse.success(UserConverter.toUserGetResponse(user));
+    }
+
+    // First check by email, to find out whether user exists or not,
+    // if not exists then throw an exception, else return UserGetResponse
+    public User getByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_NOT_FOUND, email));
+            return new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, email);
+        });
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.USER_FETCHED, user.getEmail()));
+        return user;
     }
 
     // First check by id, to find out whether user exists or not,
