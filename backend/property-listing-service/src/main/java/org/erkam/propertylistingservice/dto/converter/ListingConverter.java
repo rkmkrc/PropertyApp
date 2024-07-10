@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class ListingConverter {
     public static Listing toListing(ListingSaveRequest request) {
         return Listing.builder()
+                .userId(request.getUserId())
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .area(request.getArea())

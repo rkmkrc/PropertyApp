@@ -2,6 +2,9 @@ package org.erkam.propertyuserservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.service.ListingService;
 import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.UserSuccessMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
@@ -16,6 +19,9 @@ import org.erkam.propertyuserservice.exception.user.UserException;
 import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.erkam.propertyuserservice.model.User;
 import org.erkam.propertyuserservice.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ListingService listingService;
 
     // First check by email, to find out whether user exists or not,
     // if not exists then save if exists then throw an exception.
@@ -96,5 +103,32 @@ public class UserService {
         userRepository.delete(user);
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.USER_DELETED, user.getEmail()));
         return GenericResponse.success(UserDeleteResponse.of(user));
+    }
+
+    // First check user exists, and authenticated, and has package
+    // then request to listing service by feign client
+    public GenericResponse<ListingSaveResponse> addListing(ListingSaveRequest request) {
+
+        // 1. Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!authentication.isAuthenticated()) {
+            throw new UserException.UserIsNotAuthenticatedException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // 2. Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        // TODO: 3. Check User Package
+//        if (user.getPackages().isEmpty()) {
+//            return new GenericResponse<>("User does not have any package", null, HttpStatus.BAD_REQUEST);
+//        }
+
+        // 4. Request to Listing Service
+        request.setUserId(user.getId());
+        ListingSaveResponse response = listingService.addListing(request);
+
+        return GenericResponse.success(response);
     }
 }

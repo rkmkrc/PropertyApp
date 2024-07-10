@@ -1,9 +1,9 @@
-package org.erkam.propertylistingservice.dto.request.listing;
+package org.erkam.propertyuserservice.client.listing.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.erkam.propertylistingservice.model.enums.PropertyType;
+import org.erkam.propertyuserservice.model.enums.PropertyType;
 
 import java.math.BigDecimal;
 

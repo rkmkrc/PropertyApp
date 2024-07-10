@@ -35,8 +35,6 @@ public class User implements UserDetails {
     @Column(name = "role")
     private Role role;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Listing> listings;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Package> packages;
 
     @Override

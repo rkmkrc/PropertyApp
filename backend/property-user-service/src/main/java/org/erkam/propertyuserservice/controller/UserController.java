@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
@@ -113,5 +115,29 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<GenericResponse<UserDeleteResponse>> deleteById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.deleteById(id), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Post endpoint to create a listing for user.",
+            summary = "Create a listing for user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Created.",
+                            responseCode = "201"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request.",
+                            responseCode = "400"
+                    )
+            }
+    )
+    @PostMapping("/listings")
+    public ResponseEntity<GenericResponse<ListingSaveResponse>> addListing(@RequestBody ListingSaveRequest request) {
+            GenericResponse<ListingSaveResponse> response = userService.addListing(request);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

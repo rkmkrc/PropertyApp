@@ -48,7 +48,6 @@ public class ListingService {
         }
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_LISTINGS_FETCHED));
         return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
-
     }
 
     // First check by id, to find out whether listing exists or not,
@@ -72,6 +71,19 @@ public class ListingService {
         listingRepository.delete(listing);
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_DELETED, listing.getId()));
         return GenericResponse.success(ListingDeleteResponse.of(listing));
+    }
+
+    // Get all listings from database of a user specified by userId
+    // if there are no data on database then throw an exception,
+    // else convert listings to ListingGetResponse list then return it.
+    public GenericResponse<List<ListingGetResponse>> getListingsByUserId(Long userId) {
+        List<Listing> listings = listingRepository.findListingsByUserId(userId);
+        if (listings.isEmpty()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.NO_LISTING_FOUND_FOR_THIS_USER, userId));
+            throw new ListingException.NoDataOnDatabaseException(ListingExceptionMessage.NO_LISTING_FOUND_FOR_THIS_USER);
+        }
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_LISTINGS_OF_THIS_USER_FETCHED, userId));
+        return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
     }
 
     // This method checks for a duplicate listing in repository

@@ -114,4 +114,27 @@ public class ListingController {
     public ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteById(@PathVariable Long id) {
         return new ResponseEntity<>(listingService.deleteById(id), HttpStatus.OK);
     }
+
+    @Operation(
+            description = "Get endpoint to fetch all listings of a user.",
+            summary = "Get all listings of a user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @GetMapping("user/{userId}")
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getListingsByUserId(@PathVariable Long userId) {
+        return new ResponseEntity<>(listingService.getListingsByUserId(userId), HttpStatus.OK);
+    }
 }
