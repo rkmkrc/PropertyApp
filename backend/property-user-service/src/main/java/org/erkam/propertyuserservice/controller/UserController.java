@@ -137,7 +137,6 @@ public class UserController {
     )
     @PostMapping("/listings")
     public ResponseEntity<GenericResponse<ListingSaveResponse>> addListing(@RequestBody ListingSaveRequest request) {
-            GenericResponse<ListingSaveResponse> response = userService.addListing(request);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return new ResponseEntity<>(userService.addListing(request), HttpStatus.CREATED);
     }
 }

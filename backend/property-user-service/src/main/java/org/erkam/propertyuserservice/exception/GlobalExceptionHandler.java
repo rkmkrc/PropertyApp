@@ -1,5 +1,8 @@
 package org.erkam.propertyuserservice.exception;
 
+import feign.FeignException;
+import io.jsonwebtoken.ExpiredJwtException;
+import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.error.ErrorDetails;
 import org.erkam.propertyuserservice.exception.user.UserException;
 import org.springframework.http.HttpStatus;
@@ -36,8 +39,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGlobalException(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), request.getDescription(false));
+    public ResponseEntity<?> handleGlobalException(Exception exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorDetails> handleFeignStatusException(FeignException ex, WebRequest request) {
+        String simplifiedMessage = extractSimplifiedMessage(ex.getMessage());
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), simplifiedMessage, request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private String extractSimplifiedMessage(String message) {
+        if (message.contains("Duplicate listing found with title:")) {
+            return "Duplicate listing found.";
+        }
+        return message;
     }
 }
