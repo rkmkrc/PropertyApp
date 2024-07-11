@@ -4,6 +4,8 @@ import feign.FeignException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.error.ErrorDetails;
+import org.erkam.propertyuserservice.exception.jwt.JwtException;
+import org.erkam.propertyuserservice.exception.jwt.JwtExceptionMessage;
 import org.erkam.propertyuserservice.exception.user.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,10 +40,28 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGlobalException(Exception exception, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(JwtException.InvalidJwtTokenException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidJwtTokenException(JwtException.InvalidJwtTokenException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_INVALID);
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.ExpiredJwtTokenException.class)
+    public ResponseEntity<ErrorDetails> handleExpiredJwtTokenException(JwtException.ExpiredJwtTokenException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_EXPIRED);
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.MalformedJwtTokenException.class)
+    public ResponseEntity<ErrorDetails> handleMalformedJwtTokenException(JwtException.MalformedJwtTokenException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_MALFORMED);
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.UnsupportedJwtTokenException.class)
+    public ResponseEntity<ErrorDetails> handleUnsupportedJwtTokenException(JwtException.UnsupportedJwtTokenException ex) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_UNSUPPORTED);
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(FeignException.class)
@@ -51,8 +71,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGlobalException(Exception exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private String extractSimplifiedMessage(String message) {
-        if (message.contains("Duplicate listing found with title:")) {
+        if (message.contains("Duplicate listing found")) {
             return "Duplicate listing found.";
         }
         return message;

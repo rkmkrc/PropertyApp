@@ -127,6 +127,10 @@ public class UserController {
                     ),
                     @ApiResponse(
                             description = "Unauthorized.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Forbidden.",
                             responseCode = "403"
                     ),
                     @ApiResponse(
