@@ -12,6 +12,7 @@
         <module name="property-gateway" />
         <module name="property-service" />
         <module name="property-registry" />
+        <module name="property-payment-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -23,6 +24,7 @@
       <module name="property-auth-service" options="-parameters" />
       <module name="property-gateway" options="-parameters" />
       <module name="property-listing-service" options="-parameters" />
+      <module name="property-payment-service" options="-parameters" />
       <module name="property-registry" options="-parameters" />
       <module name="property-service" options="-parameters" />
       <module name="property-user-service" options="-parameters" />

@@ -5,13 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
 import org.erkam.propertyuserservice.client.listing.service.ListingService;
+import org.erkam.propertyuserservice.client.payment.dto.request.PaymentRequest;
+import org.erkam.propertyuserservice.client.payment.dto.response.PaymentResponse;
+import org.erkam.propertyuserservice.client.payment.service.PaymentService;
 import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.UserSuccessMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
 import org.erkam.propertyuserservice.dto.converter.UserConverter;
 import org.erkam.propertyuserservice.dto.request.auth.RegisterRequest;
+import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
+import org.erkam.propertyuserservice.dto.response.user.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserGetResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserSaveResponse;
@@ -31,6 +36,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final ListingService listingService;
+    private final PaymentService paymentService;
 
     // First check by email, to find out whether user exists or not,
     // if not exists then save if exists then throw an exception.
@@ -103,31 +109,63 @@ public class UserService {
         return GenericResponse.success(UserDeleteResponse.of(user));
     }
 
-    // First check user exists, and authenticated, and has package
+    // First check is user authenticated, and has package
     // then request to listing service by feign client
     public GenericResponse<ListingSaveResponse> addListing(ListingSaveRequest request) {
 
-        // 1. Check Authentication of the user
+        // Check Authentication of the user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!authentication.isAuthenticated()) {
             log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
             throw new UserException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
         }
 
-        // 2. Get User
+        // Get User
         String userEmail = authentication.getName();
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
 
-        // TODO: 3. Check User Package
+        // TODO: Check User Package
 //        if (user.getPackages().isEmpty()) {
 //            return new GenericResponse<>("User does not have any package", null, HttpStatus.BAD_REQUEST);
 //        }
 
-        // 4. Request to Listing Service
+        // Request to Listing Service
         request.setUserId(user.getId());
         ListingSaveResponse response = listingService.addListing(request);
 
         return GenericResponse.success(response);
+    }
+
+    // Check user is authenticated first,
+    // then call payment service, if payment is successful
+    // then assign package to the user.
+    public GenericResponse<BuyPackageResponse> buyPackage(BuyPackageRequest request) {
+
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!authentication.isAuthenticated()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        // Call payment service
+        PaymentResponse response = paymentService.receivePayment(PaymentRequest.from(user, request));
+
+        // Assign package to the user.
+        user.assignPackage(request);
+
+        // Update the user.
+        user.updateUserAfterBuyingPackage(request);
+
+        // Save user
+        userRepository.save(user);
+
+        return GenericResponse.success(BuyPackageResponse.of(request));
     }
 }

@@ -27,7 +27,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         // Define the specific endpoint to be secured
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/listings/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users/listings/**", "/api/v1/users/packages/**").authenticated()
                         // Allow all other endpoints
                         .anyRequest().permitAll()
                 )

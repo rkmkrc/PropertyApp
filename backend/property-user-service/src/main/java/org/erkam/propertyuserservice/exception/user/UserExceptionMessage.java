@@ -5,5 +5,6 @@ public class UserExceptionMessage {
     public static final String USER_NOT_FOUND = "User not found";
     public static final String LISTING_COULD_NOT_CREATED = "Listing could not created";
     public static final String USER_IS_NOT_AUTHENTICATED = "User is not authenticated";
-    public static String USER_ALREADY_EXISTS = "User already exists";
+    public static final String PAYMENT_FAILED = "Payment failed";
+    public static final String USER_ALREADY_EXISTS = "User already exists";
 }

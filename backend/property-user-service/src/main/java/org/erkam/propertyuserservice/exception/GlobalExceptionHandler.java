@@ -7,6 +7,7 @@ import org.erkam.propertyuserservice.error.ErrorDetails;
 import org.erkam.propertyuserservice.exception.jwt.JwtException;
 import org.erkam.propertyuserservice.exception.jwt.JwtExceptionMessage;
 import org.erkam.propertyuserservice.exception.user.UserException;
+import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,6 +21,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleUserAlreadyExistsException(UserException.UserAlreadyExistException exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserException.PaymentFailedException.class)
+    public ResponseEntity<ErrorDetails> handlePaymentFailedException(UserException.PaymentFailedException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), UserExceptionMessage.PAYMENT_FAILED);
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserException.UserNotFoundException.class)
@@ -41,32 +48,32 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(JwtException.InvalidJwtTokenException.class)
-    public ResponseEntity<ErrorDetails> handleInvalidJwtTokenException(JwtException.InvalidJwtTokenException ex) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_INVALID);
+    public ResponseEntity<ErrorDetails> handleInvalidJwtTokenException(JwtException.InvalidJwtTokenException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_INVALID);
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(JwtException.ExpiredJwtTokenException.class)
-    public ResponseEntity<ErrorDetails> handleExpiredJwtTokenException(JwtException.ExpiredJwtTokenException ex) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_EXPIRED);
+    public ResponseEntity<ErrorDetails> handleExpiredJwtTokenException(JwtException.ExpiredJwtTokenException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_EXPIRED);
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(JwtException.MalformedJwtTokenException.class)
-    public ResponseEntity<ErrorDetails> handleMalformedJwtTokenException(JwtException.MalformedJwtTokenException ex) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_MALFORMED);
+    public ResponseEntity<ErrorDetails> handleMalformedJwtTokenException(JwtException.MalformedJwtTokenException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_MALFORMED);
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(JwtException.UnsupportedJwtTokenException.class)
-    public ResponseEntity<ErrorDetails> handleUnsupportedJwtTokenException(JwtException.UnsupportedJwtTokenException ex) {
-        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_UNSUPPORTED);
+    public ResponseEntity<ErrorDetails> handleUnsupportedJwtTokenException(JwtException.UnsupportedJwtTokenException exception) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.UNAUTHORIZED.value(), exception.getMessage(), JwtExceptionMessage.JWT_TOKEN_IS_UNSUPPORTED);
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(FeignException.class)
-    public ResponseEntity<ErrorDetails> handleFeignStatusException(FeignException ex, WebRequest request) {
-        String simplifiedMessage = extractSimplifiedMessage(ex.getMessage());
+    public ResponseEntity<ErrorDetails> handleFeignStatusException(FeignException exception, WebRequest request) {
+        String simplifiedMessage = extractSimplifiedMessage(exception.getMessage());
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), simplifiedMessage, request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }

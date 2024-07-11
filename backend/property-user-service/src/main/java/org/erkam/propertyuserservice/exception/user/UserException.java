@@ -28,6 +28,12 @@ public class UserException extends RuntimeException {
         public ListingCouldNotCreatedException(String message) { super(message); }
     }
 
+    public static class PaymentFailedException extends UserException {
+        public PaymentFailedException(String message) {
+            super(message);
+        }
+    }
+
     public static class UserIsNotAuthenticatedException extends UserException {
         public UserIsNotAuthenticatedException(String message) {
             super(message);

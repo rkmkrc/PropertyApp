@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
+import org.erkam.propertyuserservice.dto.response.user.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserGetResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserSaveResponse;
@@ -142,5 +144,32 @@ public class UserController {
     @PostMapping("/listings")
     public ResponseEntity<GenericResponse<ListingSaveResponse>> addListing(@RequestBody ListingSaveRequest request) {
             return new ResponseEntity<>(userService.addListing(request), HttpStatus.CREATED);
+    }
+
+    @Operation(
+            description = "Post endpoint to buy a package for user.",
+            summary = "Buy a package for user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Created.",
+                            responseCode = "201"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Forbidden.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request.",
+                            responseCode = "400"
+                    )
+            }
+    )
+    @PostMapping("/packages")
+    public ResponseEntity<GenericResponse<BuyPackageResponse>> buyPackage(@RequestBody BuyPackageRequest request) {
+        return new ResponseEntity<>(userService.buyPackage(request), HttpStatus.OK);
     }
 }
