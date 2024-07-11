@@ -125,10 +125,7 @@ public class UserService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
 
-        // TODO: Check User Package
-//        if (user.getPackages().isEmpty()) {
-//            return new GenericResponse<>("User does not have any package", null, HttpStatus.BAD_REQUEST);
-//        }
+        // TODO: Check User Packages
 
         // Request to Listing Service
         request.setUserId(user.getId());
