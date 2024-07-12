@@ -3,6 +3,7 @@ package org.erkam.propertyuserservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
+import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.erkam.propertyuserservice.model.enums.PackageType;
 import org.erkam.propertyuserservice.model.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,9 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -41,8 +40,10 @@ public class User implements UserDetails {
     private Role role;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Package> packages;
+    @Builder.Default
     @Column(name = "total_days_to_expiration_of_packages")
     private Integer totalDaysToExpirationOfPackages = 0;
+    @Builder.Default
     @Column(name = "publishing_quota")
     private Integer publishingQuota = 0;
 
@@ -54,8 +55,8 @@ public class User implements UserDetails {
         this.packages.add(Package.of(request));
     }
 
-    public void updateUserAfterBuyingPackage(BuyPackageRequest request) {
-        updateTotalDaysToExpirationOfPackages();
+    public void updateUserAfterPurchasingAPackage(BuyPackageRequest request) {
+        updateTotalDaysAccordingToExpirationOfPackages();
         updatePublishingQuota(request.getType());
     }
 
@@ -68,7 +69,7 @@ public class User implements UserDetails {
     }
 
     // Updates user according to products.
-    private void updateTotalDaysToExpirationOfPackages() {
+    private void updateTotalDaysAccordingToExpirationOfPackages() {
         LocalDate currentDate = LocalDate.now();
         int totalDaysToExpiration = packages.stream()
                 .mapToInt(pkg -> (int) ChronoUnit.DAYS.between(currentDate, pkg.getExpirationDate()))
@@ -79,6 +80,26 @@ public class User implements UserDetails {
     // Updates user according to products.
     public void reducePublishingQuotaByOne() {
         this.publishingQuota -= 1;
+    }
+
+    // Checks the user is eligible to add listing
+    public boolean isUserEligibleToPublishListing() {
+        return publishingQuota > 0 && totalDaysToExpirationOfPackages > 0;
+    }
+
+    // Gets the eligibility error messages
+    public String getEligibilityErrorMessages() {
+        StringBuilder errorMessages = new StringBuilder();
+
+        if (publishingQuota <= 0) {
+            errorMessages.append(UserExceptionMessage.USER_HAS_NOT_ANY_QUOTA_TO_PUBLISH_A_LISTING).append(". ");
+        }
+
+        if (totalDaysToExpirationOfPackages <= 0) {
+            errorMessages.append(UserExceptionMessage.USER_HAS_NOT_ANY_PACKAGES_TO_PUBLISH_A_LISTING).append(". ");
+        }
+
+        return errorMessages.toString().trim();
     }
 
     @Override

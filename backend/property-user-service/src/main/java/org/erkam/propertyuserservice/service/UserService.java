@@ -126,12 +126,22 @@ public class UserService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
 
-        // TODO: Check User Packages
+        // Check users eligibility to publish a listing
+        if (!user.isUserEligibleToPublishListing()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_ELIGIBLE_TO_PUBLISH_A_LISTING));
+            throw new UserException.UserIsNotEligibleToAddListing(user.getEligibilityErrorMessages());
+        }
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.USER_IS_ELIGIBLE_TO_PUBLISH_A_LISTING));
 
         // Request to Listing Service
         request.setUserId(user.getId());
         ListingSaveResponse response = listingService.addListing(request);
 
+        // Reduce the users quota by one
+        user.reducePublishingQuotaByOne();
+
+        // Save user
+        userRepository.save(user);
         return GenericResponse.success(response);
     }
 
@@ -159,7 +169,7 @@ public class UserService {
         user.assignPackage(request);
 
         // Update the user.
-        user.updateUserAfterBuyingPackage(request);
+        user.updateUserAfterPurchasingAPackage(request);
 
         // Save user
         userRepository.save(user);

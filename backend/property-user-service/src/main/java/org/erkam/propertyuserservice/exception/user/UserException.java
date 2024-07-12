@@ -39,5 +39,9 @@ public class UserException extends RuntimeException {
             super(message);
         }
     }
+
+    public static class UserIsNotEligibleToAddListing extends UserException {
+        public UserIsNotEligibleToAddListing(String message) { super(message); }
+    }
 }
 

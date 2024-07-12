@@ -45,9 +45,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserException.ListingCouldNotCreatedException.class)
-    public ResponseEntity<?> listingCouldNotCreatedException(UserException.ListingCouldNotCreatedException exception, WebRequest request) {
+    public ResponseEntity<?> handleListingCouldNotCreatedException(UserException.ListingCouldNotCreatedException exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UserException.UserIsNotEligibleToAddListing.class)
+    public ResponseEntity<?> handleUserIsNotEligibleToAddListing(UserException.UserIsNotEligibleToAddListing exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
     // CLASS: END - UserException
     // CLASS: JwtException
