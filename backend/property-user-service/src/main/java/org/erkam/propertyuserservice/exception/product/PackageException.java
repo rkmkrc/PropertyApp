@@ -7,7 +7,8 @@ public class PackageException extends RuntimeException {
         super(message);
     }
 
-    public static class InvalidPackageTypeException extends PackageException {
-        public InvalidPackageTypeException(String message, PackageType type) { super(message + " : " + type.name()); }
+    public static class InvalidTypeOfPackageException extends PackageException {
+        public InvalidTypeOfPackageException(String message, PackageType type) { super(message + " : " + type.name()); }
+        public InvalidTypeOfPackageException(String message, String type) { super(message + " : " + type); }
     }
 }

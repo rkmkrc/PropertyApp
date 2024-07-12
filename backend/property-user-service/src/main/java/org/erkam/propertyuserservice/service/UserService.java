@@ -29,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -164,5 +165,9 @@ public class UserService {
         userRepository.save(user);
 
         return GenericResponse.success(BuyPackageResponse.of(request));
+    }
+
+    public Optional<User> findByEmailForAppConfig(String username) {
+        return userRepository.findByEmail(username);
     }
 }

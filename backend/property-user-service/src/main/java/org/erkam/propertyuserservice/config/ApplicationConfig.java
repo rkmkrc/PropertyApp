@@ -3,6 +3,7 @@ package org.erkam.propertyuserservice.config;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.erkam.propertyuserservice.repository.UserRepository;
+import org.erkam.propertyuserservice.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,12 +18,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
+    // Username here equals the email in the context of this project
     @Bean
     public UserDetailsService userDetailsService() {
         return (UserDetailsService) username ->
-            userRepository.findByEmail(username)
+                userService.findByEmailForAppConfig(username)
                     .orElseThrow(() -> new UsernameNotFoundException(UserExceptionMessage.USER_NOT_FOUND + " = " + username));
     }
 
