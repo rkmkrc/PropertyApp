@@ -1,8 +1,5 @@
 package org.erkam.propertyuserservice.exception.user;
 
-import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
-import org.erkam.propertyuserservice.dto.response.GenericResponse;
-
 public class UserException extends RuntimeException {
     public UserException(String message) {
         super(message);
@@ -46,6 +43,10 @@ public class UserException extends RuntimeException {
 
     public static class UserHasNotAnyPackagesException extends UserException {
         public UserHasNotAnyPackagesException(String message, String email) { super(message + " with email: " + email); }
+    }
+
+    public static class UserHasNotAnyListingsException extends UserException {
+        public UserHasNotAnyListingsException(String message) { super(message); }
     }
 }
 

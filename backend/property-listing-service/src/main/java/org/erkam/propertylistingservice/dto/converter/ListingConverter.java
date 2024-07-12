@@ -6,6 +6,7 @@ import org.erkam.propertylistingservice.dto.response.listing.ListingGetResponse;
 import org.erkam.propertylistingservice.model.Listing;
 import org.erkam.propertylistingservice.model.enums.ListingStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,14 +21,8 @@ public class ListingConverter {
                 .price(request.getPrice())
                 .type(request.getType())
                 .status(ListingStatus.IN_REVIEW)
-                .publishedDate(LocalDateTime.now())
+                .publishedDate(LocalDate.now())
                 .build();
-    }
-
-    public static List<ListingGetResponse> toListingGetResponseList(List<Listing> listings) {
-        return listings.stream()
-                .map(ListingConverter::toListingGetResponse)
-                .collect(Collectors.toList());
     }
 
     public static ListingGetResponse toListingGetResponse(Listing listing) {
@@ -35,9 +30,16 @@ public class ListingConverter {
                 .title(listing.getTitle())
                 .description(listing.getDescription())
                 .area(listing.getArea())
+                .status(listing.getStatus())
                 .publishedDate(listing.getPublishedDate())
                 .price(listing.getPrice())
                 .type(listing.getType())
                 .build();
+    }
+
+    public static List<ListingGetResponse> toListingGetResponseList(List<Listing> listings) {
+        return listings.stream()
+                .map(ListingConverter::toListingGetResponse)
+                .collect(Collectors.toList());
     }
 }

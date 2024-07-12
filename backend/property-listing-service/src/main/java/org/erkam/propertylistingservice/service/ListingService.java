@@ -14,6 +14,7 @@ import org.erkam.propertylistingservice.dto.response.listing.ListingSaveResponse
 import org.erkam.propertylistingservice.exception.listing.ListingException;
 import org.erkam.propertylistingservice.exception.listing.ListingExceptionMessage;
 import org.erkam.propertylistingservice.model.Listing;
+import org.erkam.propertylistingservice.model.enums.ListingStatus;
 import org.erkam.propertylistingservice.repository.ListingRepository;
 import org.springframework.stereotype.Service;
 
@@ -73,6 +74,8 @@ public class ListingService {
         return GenericResponse.success(ListingDeleteResponse.of(listing));
     }
 
+    // NOTE: This method requires the authentication, to list all active and passive listings of user
+    // TODO: Secure this methods endpoint
     // Get all listings from database of a user specified by userId
     // if there are no data on database then throw an exception,
     // else convert listings to ListingGetResponse list then return it.
@@ -97,5 +100,19 @@ public class ListingService {
                 listing.getType(),
                 listing.getStatus()
         ).isPresent();
+    }
+
+    // This method does not require authentication
+    // Get only active listings from database of a user specified by userId
+    // if there are no data on database then throw an exception,
+    // else convert listings to ListingGetResponse list then return it.
+    public GenericResponse<List<ListingGetResponse>> getActiveListingsByUserId(Long userId) {
+        List<Listing> listings = listingRepository.findListingsByUserIdAndStatus(userId, ListingStatus.ACTIVE);
+        if (listings.isEmpty()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.NO_ACTIVE_LISTINGS_FOUND_FOR_THIS_USER, userId));
+            throw new ListingException.NoActiveListingsFoundForThisUserException(ListingExceptionMessage.NO_ACTIVE_LISTINGS_FOUND_FOR_THIS_USER);
+        }
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_LISTINGS_OF_THIS_USER_FETCHED, userId));
+        return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
     }
 }

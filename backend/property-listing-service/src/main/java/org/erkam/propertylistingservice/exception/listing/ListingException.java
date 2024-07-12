@@ -20,5 +20,9 @@ public class ListingException extends RuntimeException {
     public static class DuplicateListingException extends ListingException {
         public DuplicateListingException(String message, String title) { super(message + " with title: " + title); }
     }
+
+    public static class NoActiveListingsFoundForThisUserException extends ListingException {
+        public NoActiveListingsFoundForThisUserException(String message) { super(message); }
+    }
 }
 

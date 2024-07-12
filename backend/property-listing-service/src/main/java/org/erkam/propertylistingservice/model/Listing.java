@@ -6,7 +6,7 @@ import org.erkam.propertylistingservice.model.enums.ListingStatus;
 import org.erkam.propertylistingservice.model.enums.PropertyType;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "listings")
@@ -36,5 +36,5 @@ public class Listing {
     @Column(name = "status")
     private ListingStatus status;
     @Column(name = "published_date")
-    private LocalDateTime publishedDate;
+    private LocalDate publishedDate;
 }

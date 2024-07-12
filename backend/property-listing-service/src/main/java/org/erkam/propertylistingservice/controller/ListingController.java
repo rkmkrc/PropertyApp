@@ -137,4 +137,27 @@ public class ListingController {
     public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getListingsByUserId(@PathVariable Long userId) {
         return new ResponseEntity<>(listingService.getListingsByUserId(userId), HttpStatus.OK);
     }
+
+    @Operation(
+            description = "Get endpoint to fetch active listings of a user. For public usage.",
+            summary = "Get active listings of a user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @GetMapping("/user/{userId}/active")
+    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListingsOfUser(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(listingService.getActiveListingsByUserId(userId), HttpStatus.OK);
+    }
 }

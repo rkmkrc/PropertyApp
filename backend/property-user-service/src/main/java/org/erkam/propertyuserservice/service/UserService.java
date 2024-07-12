@@ -17,6 +17,7 @@ import org.erkam.propertyuserservice.dto.request.auth.RegisterRequest;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
+import org.erkam.propertyuserservice.dto.response.listing.ListingGetResponse;
 import org.erkam.propertyuserservice.dto.response.product.PackageGetResponse;
 import org.erkam.propertyuserservice.dto.response.product.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
@@ -99,6 +100,13 @@ public class UserService {
         });
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.USER_FETCHED, user.getEmail()));
         return user;
+    }
+
+    // This method is implemented for disabling the direct interaction between
+    // AppConfig with User Repository, instead of that AppConfig is interacting
+    // on User Service
+    public Optional<User> findByEmailForAppConfig(String username) {
+        return userRepository.findByEmail(username);
     }
 
     // First check by id, to find out whether user exists or not,
@@ -202,8 +210,29 @@ public class UserService {
         return GenericResponse.success(PackageConverter.toPackageGetResponseList(user.getPackages()));
     }
 
-    public Optional<User> findByEmailForAppConfig(String username) {
-        return userRepository.findByEmail(username);
-    }
+    // Check user is authenticated first,
+    // then call listing service, then return the response.
+    public GenericResponse<List<ListingGetResponse>> getAllListings() {
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException.UserIsNotAuthenticatedException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
 
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        List<ListingGetResponse> response = listingService.getAllListingsOfUser(user.getId());
+
+        if (response.size() == 0) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_HAS_NOT_ANY_LISTINGS));
+            throw new UserException.UserHasNotAnyListingsException(UserExceptionMessage.USER_HAS_NOT_ANY_LISTINGS);
+        }
+
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.ALL_LISTINGS_OF_THE_USER_ARE_FETCHED, user.getEmail()));
+        return GenericResponse.success(response);
+    }
 }

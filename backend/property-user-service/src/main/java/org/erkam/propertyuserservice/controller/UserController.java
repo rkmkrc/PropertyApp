@@ -9,6 +9,7 @@ import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResp
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
+import org.erkam.propertyuserservice.dto.response.listing.ListingGetResponse;
 import org.erkam.propertyuserservice.dto.response.product.PackageGetResponse;
 import org.erkam.propertyuserservice.dto.response.product.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
@@ -152,8 +153,8 @@ public class UserController {
             summary = "Buy a package for user.",
             responses = {
                     @ApiResponse(
-                            description = "Created.",
-                            responseCode = "201"
+                            description = "Success.",
+                            responseCode = "200"
                     ),
                     @ApiResponse(
                             description = "Unauthorized.",
@@ -189,11 +190,42 @@ public class UserController {
                     @ApiResponse(
                             description = "Bad Request.",
                             responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
                     )
             }
     )
     @GetMapping("/packages")
     public ResponseEntity<GenericResponse<List<PackageGetResponse>>> getPackages() {
         return new ResponseEntity<>(userService.getAllPackages(), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Get endpoint of passive listings of user.",
+            summary = "Get passive listings of user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Forbidden.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request.",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    )
+            }
+    )
+    @GetMapping("/listings")
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getAllListings() {
+        return new ResponseEntity<>(userService.getAllListings(), HttpStatus.OK);
     }
 }

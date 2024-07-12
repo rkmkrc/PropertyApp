@@ -1,8 +1,8 @@
-package org.erkam.propertylistingservice.dto.response.listing;
+package org.erkam.propertyuserservice.dto.response.listing;
 
 import lombok.*;
-import org.erkam.propertylistingservice.model.enums.ListingStatus;
-import org.erkam.propertylistingservice.model.enums.PropertyType;
+import org.erkam.propertyuserservice.model.enums.ListingStatus;
+import org.erkam.propertyuserservice.model.enums.PropertyType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

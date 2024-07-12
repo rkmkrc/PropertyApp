@@ -1,7 +1,5 @@
 package org.erkam.propertyuserservice.exception;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import feign.FeignException;
 import org.erkam.propertyuserservice.error.ErrorDetails;
 import org.erkam.propertyuserservice.exception.jwt.JwtException;
@@ -24,6 +22,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleUserAlreadyExistsException(UserException.UserAlreadyExistException exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserException.UserHasNotAnyListingsException.class)
+    public ResponseEntity<?> handleUserHasNotAnyPassiveListingsException(UserException.UserHasNotAnyListingsException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserException.UserHasNotAnyPackagesException.class)

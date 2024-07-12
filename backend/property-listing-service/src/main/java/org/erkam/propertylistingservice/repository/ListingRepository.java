@@ -17,4 +17,6 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     Optional<Listing> findByTitleAndPriceAndAreaAndDescriptionAndTypeAndStatus(String title, BigDecimal price, Integer area, String description, PropertyType type, ListingStatus status);
 
     List<Listing> findListingsByUserId(Long userId);
+
+    List<Listing> findListingsByUserIdAndStatus(Long userId, ListingStatus listingStatus);
 }
