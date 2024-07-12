@@ -43,5 +43,9 @@ public class UserException extends RuntimeException {
     public static class UserIsNotEligibleToAddListing extends UserException {
         public UserIsNotEligibleToAddListing(String message) { super(message); }
     }
+
+    public static class UserHasNotAnyPackagesException extends UserException {
+        public UserHasNotAnyPackagesException(String message, String email) { super(message + " with email: " + email); }
+    }
 }
 

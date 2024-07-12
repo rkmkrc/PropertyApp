@@ -1,6 +1,5 @@
-package org.erkam.propertyuserservice.dto.converter;
+package org.erkam.propertyuserservice.dto.converter.user;
 
-import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.dto.request.auth.RegisterRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.user.UserGetResponse;

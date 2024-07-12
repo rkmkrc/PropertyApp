@@ -68,13 +68,15 @@ public class User implements UserDetails {
         this.publishingQuota += Package.getQuotaOfType(type);
     }
 
-    // Updates user according to products.
+    // Updates user according to products. Exclude expired packages if any
+    // Ensure non-negative total
     private void updateTotalDaysAccordingToExpirationOfPackages() {
         LocalDate currentDate = LocalDate.now();
         int totalDaysToExpiration = packages.stream()
+                .filter(pkg -> !pkg.getExpirationDate().isBefore(currentDate))
                 .mapToInt(pkg -> (int) ChronoUnit.DAYS.between(currentDate, pkg.getExpirationDate()))
                 .sum();
-        this.totalDaysToExpirationOfPackages = totalDaysToExpiration;
+        this.totalDaysToExpirationOfPackages = Math.max(totalDaysToExpiration, 0);
     }
 
     // Updates user according to products.

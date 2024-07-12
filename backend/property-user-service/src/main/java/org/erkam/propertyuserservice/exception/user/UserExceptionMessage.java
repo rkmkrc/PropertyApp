@@ -10,4 +10,5 @@ public class UserExceptionMessage {
     public static final String USER_HAS_NOT_ANY_QUOTA_TO_PUBLISH_A_LISTING = "User has not any quota to publish a listing";
     public static final String USER_HAS_NOT_ANY_PACKAGES_TO_PUBLISH_A_LISTING = "User has not any packages to publish a listing";
     public static final String USER_IS_NOT_ELIGIBLE_TO_PUBLISH_A_LISTING = "User is not eligible to publish a listing";
+    public static final String USER_HAS_NOT_ANY_PACKAGES = "User has not any packages";
 }

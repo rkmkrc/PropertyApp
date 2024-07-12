@@ -11,12 +11,14 @@ import org.erkam.propertyuserservice.client.payment.service.PaymentService;
 import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.UserSuccessMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
-import org.erkam.propertyuserservice.dto.converter.UserConverter;
+import org.erkam.propertyuserservice.dto.converter.product.PackageConverter;
+import org.erkam.propertyuserservice.dto.converter.user.UserConverter;
 import org.erkam.propertyuserservice.dto.request.auth.RegisterRequest;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
-import org.erkam.propertyuserservice.dto.response.user.BuyPackageResponse;
+import org.erkam.propertyuserservice.dto.response.product.PackageGetResponse;
+import org.erkam.propertyuserservice.dto.response.product.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserGetResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserSaveResponse;
@@ -24,6 +26,7 @@ import org.erkam.propertyuserservice.exception.user.UserException;
 import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.erkam.propertyuserservice.model.User;
 import org.erkam.propertyuserservice.repository.UserRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -116,7 +119,7 @@ public class UserService {
 
         // Check Authentication of the user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
             throw new UserException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
         }
@@ -152,7 +155,7 @@ public class UserService {
 
         // Check Authentication of the user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
             throw new UserException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
         }
@@ -177,7 +180,30 @@ public class UserService {
         return GenericResponse.success(BuyPackageResponse.of(request));
     }
 
+    // Check user is authenticated first,
+    // then return the packages of the user
+    public GenericResponse<List<PackageGetResponse>> getAllPackages() {
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        if (user.getPackages().size() == 0) {
+            throw new UserException.UserHasNotAnyPackagesException(UserExceptionMessage.USER_HAS_NOT_ANY_PACKAGES, userEmail);
+        }
+
+        return GenericResponse.success(PackageConverter.toPackageGetResponseList(user.getPackages()));
+    }
+
     public Optional<User> findByEmailForAppConfig(String username) {
         return userRepository.findByEmail(username);
     }
+
 }

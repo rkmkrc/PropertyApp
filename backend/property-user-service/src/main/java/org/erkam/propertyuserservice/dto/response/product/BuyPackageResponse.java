@@ -1,4 +1,4 @@
-package org.erkam.propertyuserservice.dto.response.user;
+package org.erkam.propertyuserservice.dto.response.product;
 
 import lombok.*;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;

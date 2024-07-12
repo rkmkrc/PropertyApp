@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserException.UserHasNotAnyPackagesException.class)
+    public ResponseEntity<?> handleUserHasNotAnyPackagesException(UserException.UserHasNotAnyPackagesException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(UserException.PaymentFailedException.class)
     public ResponseEntity<ErrorDetails> handlePaymentFailedException(UserException.PaymentFailedException exception) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), UserExceptionMessage.PAYMENT_FAILED);

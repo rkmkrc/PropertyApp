@@ -9,7 +9,8 @@ import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResp
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
-import org.erkam.propertyuserservice.dto.response.user.BuyPackageResponse;
+import org.erkam.propertyuserservice.dto.response.product.PackageGetResponse;
+import org.erkam.propertyuserservice.dto.response.product.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserGetResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserSaveResponse;
@@ -171,5 +172,28 @@ public class UserController {
     @PostMapping("/packages")
     public ResponseEntity<GenericResponse<BuyPackageResponse>> buyPackage(@RequestBody BuyPackageRequest request) {
         return new ResponseEntity<>(userService.buyPackage(request), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Get endpoint of all packages of user.",
+            summary = "Get all packages of user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Forbidden.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request.",
+                            responseCode = "400"
+                    )
+            }
+    )
+    @GetMapping("/packages")
+    public ResponseEntity<GenericResponse<List<PackageGetResponse>>> getPackages() {
+        return new ResponseEntity<>(userService.getAllPackages(), HttpStatus.OK);
     }
 }
