@@ -66,6 +66,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(UserException.ListingCouldNotDeletedException.class)
+    public ResponseEntity<?> handleListingCouldNotDeletedException(UserException.ListingCouldNotDeletedException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UserException.UserIsNotEligibleToAddListing.class)
     public ResponseEntity<?> handleUserIsNotEligibleToAddListing(UserException.UserIsNotEligibleToAddListing exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
@@ -130,6 +136,8 @@ public class GlobalExceptionHandler {
             return "No passive listings found.";
         } else if (message.contains("No active listings found")) {
             return "No active listings found.";
+        } else if (message.contains("Listing not found or you don't have permission")) {
+            return "Listing not found or you don't have permission to delete";
         }
         return message;
     }

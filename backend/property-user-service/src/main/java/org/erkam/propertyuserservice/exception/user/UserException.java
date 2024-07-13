@@ -56,5 +56,9 @@ public class UserException extends RuntimeException {
     public static class UserHasNotAnyPassiveListingsException extends UserException {
         public UserHasNotAnyPassiveListingsException(String message) {super(message);}
     }
+
+    public static class ListingCouldNotDeletedException extends UserException {
+        public ListingCouldNotDeletedException(String message) {super(message);}
+    }
 }
 

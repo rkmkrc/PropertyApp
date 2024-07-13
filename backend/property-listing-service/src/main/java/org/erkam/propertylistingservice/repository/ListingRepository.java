@@ -19,4 +19,6 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     List<Listing> findListingsByUserId(Long userId);
 
     List<Listing> findListingsByUserIdAndStatus(Long userId, ListingStatus listingStatus);
+
+    Optional<Listing> findByIdAndUserId(Long id, Long userId);
 }

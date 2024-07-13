@@ -3,6 +3,7 @@ package org.erkam.propertyuserservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
 import org.erkam.propertyuserservice.client.listing.service.ListingService;
 import org.erkam.propertyuserservice.client.payment.dto.request.PaymentRequest;
@@ -285,6 +286,27 @@ public class UserService {
         }
 
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.ALL_ACTIVE_LISTINGS_OF_THE_USER_ARE_FETCHED, user.getEmail()));
+        return GenericResponse.success(response);
+    }
+
+    // Check user is authenticated first,
+    // then call listing service, then return the response.
+    public GenericResponse<ListingDeleteResponse> deleteListingById(Long id) {
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException.UserIsNotAuthenticatedException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        ListingDeleteResponse response = listingService.deleteListing(id);
+
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.LISTING_DELETED, id));
         return GenericResponse.success(response);
     }
 }

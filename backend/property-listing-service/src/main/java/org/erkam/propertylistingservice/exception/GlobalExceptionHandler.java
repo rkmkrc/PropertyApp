@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ListingException.ListingNotFoundOrYouDontHavePermissionException.class)
+    public ResponseEntity<?> handleListingNotFoundOrYouDontHavePermissionException(ListingException.ListingNotFoundOrYouDontHavePermissionException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(ListingException.NoActiveListingsFoundForThisUserException.class)
     public ResponseEntity<?> handleNoActiveListingsFoundForThisUserException(ListingException.NoActiveListingsFoundForThisUserException exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));

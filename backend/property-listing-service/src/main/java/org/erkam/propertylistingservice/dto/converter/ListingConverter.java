@@ -27,6 +27,7 @@ public class ListingConverter {
 
     public static ListingGetResponse toListingGetResponse(Listing listing) {
         return ListingGetResponse.builder()
+                .id(listing.getId())
                 .title(listing.getTitle())
                 .description(listing.getDescription())
                 .area(listing.getArea())

@@ -25,6 +25,11 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("userId", Long.class);
+    }
+
     // Exceptions are just for the development environment; they will not be seen from the client side
     // because reflecting specific security responses can be dangerous
     private Claims extractAllClaims(String token) {

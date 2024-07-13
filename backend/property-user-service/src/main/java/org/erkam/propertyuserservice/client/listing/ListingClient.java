@@ -1,6 +1,8 @@
 package org.erkam.propertyuserservice.client.listing;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.dto.response.listing.ListingGetResponse;
@@ -24,4 +26,7 @@ public interface ListingClient {
 
     @GetMapping("/user/{userId}/passive")
     ResponseEntity<GenericResponse<List<ListingGetResponse>>> getPassiveListingsOfUser(@PathVariable Long userId);
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteById(@PathVariable Long id);
 }

@@ -8,15 +8,13 @@ import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
 import org.erkam.propertyuserservice.exception.jwt.JwtException;
 import org.erkam.propertyuserservice.exception.jwt.JwtExceptionMessage;
-import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.erkam.propertyuserservice.model.User;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 @Slf4j
@@ -24,13 +22,15 @@ import java.util.function.Function;
 public class JwtService {
     private static final String SECRET_KEY = "5e73029a38e042cec717bcdb9d9851fcf2c81674af5df9a90ebde902c401d35b";
 
-    // Extracting email from token, in Spring context username means email for this project
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Exceptions is just for development environment they will not be seen from client side
-    // because reflecting specific security responses can be dangerous
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("userId", Long.class);
+    }
+
     private Claims extractAllClaims(String token) {
         try {
             return Jwts
@@ -57,13 +57,9 @@ public class JwtService {
         }
     }
 
-    // Validating the token to know this token belongs to the user and not expired
-    public Boolean isTokenValid(String token, UserDetails userDetails) {
+    public Boolean isTokenValid(String token, User userDetails) {
         String username = this.extractUsername(token);
-        if (username == null || !username.equals(userDetails.getUsername()) || isTokenExpired(token)) {
-            throw new JwtException.InvalidJwtTokenException("Invalid JWT token");
-        }
-        return true;
+        return (username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     public Boolean isTokenExpired(String token) {
@@ -74,15 +70,16 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(User userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userDetails.getId());
+        return createToken(claims, userDetails.getUsername());
     }
 
-    public String generateToken(Map<String, Objects> extraClaims, UserDetails userDetails) {
-        return Jwts
-                .builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+    private String createToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 minutes expiration
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)

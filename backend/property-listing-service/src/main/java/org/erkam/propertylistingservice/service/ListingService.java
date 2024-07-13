@@ -1,5 +1,6 @@
 package org.erkam.propertylistingservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertylistingservice.constants.ListingSuccessMessage;
@@ -64,10 +65,12 @@ public class ListingService {
 
     // First check by id, to find out whether listing exists or not,
     // if not exists then throw an exception, else delete the listing and return ListingDeleteResponse
-    public GenericResponse<ListingDeleteResponse> deleteById(Long id) {
-        Listing listing = listingRepository.findById(id).orElseThrow(() -> {
-            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND, id));
-            return new ListingException.ListingNotFoundException(ListingExceptionMessage.LISTING_NOT_FOUND, id);
+    public GenericResponse<ListingDeleteResponse> deleteById(Long id, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+
+        Listing listing = listingRepository.findByIdAndUserId(id, userId).orElseThrow(() -> {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id));
+            return new ListingException.ListingNotFoundOrYouDontHavePermissionException(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id);
         });
         listingRepository.delete(listing);
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_DELETED, listing.getId()));

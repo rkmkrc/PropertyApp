@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
@@ -281,5 +282,28 @@ public class UserController {
     @GetMapping("/listings/active")
     public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListings() {
         return new ResponseEntity<>(userService.getActiveListings(), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Delete endpoint of a listing of a user.",
+            summary = "Delete a listing of a user by id.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @DeleteMapping("/listings/{id}")
+    public ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteListingById(@PathVariable Long id) {
+        return new ResponseEntity<>(userService.deleteListingById(id), HttpStatus.OK);
     }
 }

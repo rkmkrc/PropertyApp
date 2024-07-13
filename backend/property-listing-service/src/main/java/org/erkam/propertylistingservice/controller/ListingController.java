@@ -3,6 +3,7 @@ package org.erkam.propertylistingservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertylistingservice.dto.request.listing.ListingSaveRequest;
 import org.erkam.propertylistingservice.dto.response.GenericResponse;
@@ -111,8 +112,8 @@ public class ListingController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteById(@PathVariable Long id) {
-        return new ResponseEntity<>(listingService.deleteById(id), HttpStatus.OK);
+    public ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteById(@PathVariable Long id, HttpServletRequest request) {
+        return new ResponseEntity<>(listingService.deleteById(id, request), HttpStatus.OK);
     }
 
     @Operation(

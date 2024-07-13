@@ -28,5 +28,9 @@ public class ListingException extends RuntimeException {
     public static class NoPassiveListingsFoundForThisUserException extends ListingException {
         public NoPassiveListingsFoundForThisUserException(String message) { super(message); }
     }
+
+    public static class ListingNotFoundOrYouDontHavePermissionException extends ListingException {
+        public ListingNotFoundOrYouDontHavePermissionException(String message, Long id) { super(message);}
+    }
 }
 

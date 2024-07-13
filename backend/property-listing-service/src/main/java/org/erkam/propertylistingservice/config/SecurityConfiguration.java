@@ -27,6 +27,7 @@ public class SecurityConfiguration {
                         // NOTE: Secured the endpoints that returns the listing with PASSIVE status.
                         .requestMatchers(HttpMethod.GET, "/api/v1/listings/user/{userId}/passive",
                                 "/api/v1/listings/user/{userId}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/listings/{id}").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

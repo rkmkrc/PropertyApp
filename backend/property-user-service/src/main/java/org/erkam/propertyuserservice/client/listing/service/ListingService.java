@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyuserservice.client.listing.ListingClient;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
 import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
@@ -62,6 +63,17 @@ public class ListingService {
             log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_HAS_NOT_ANY_PASSIVE_LISTINGS));
             log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
             throw new UserException.UserHasNotAnyPassiveListingsException(response.getBody().getMessage());
+        }
+        return response.getBody().getData();
+    }
+
+    public ListingDeleteResponse deleteListing(Long id) {
+
+        ResponseEntity<GenericResponse<ListingDeleteResponse>> response = listingClient.deleteById(id);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.LISTING_COULD_NOT_DELETED));
+            log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
+            throw new UserException.ListingCouldNotDeletedException(response.getBody().getMessage());
         }
         return response.getBody().getData();
     }

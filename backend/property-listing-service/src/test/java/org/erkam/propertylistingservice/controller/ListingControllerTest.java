@@ -1,6 +1,7 @@
 package org.erkam.propertylistingservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.erkam.propertylistingservice.dto.request.listing.ListingSaveRequest;
 import org.erkam.propertylistingservice.dto.response.GenericResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingDeleteResponse;
@@ -142,15 +143,16 @@ class ListingControllerTest {
     @Test
     void deleteById_successfully() throws Exception {
         // Given
-        when(listingService.deleteById(anyLong())).thenReturn(deleteResponse);
+        when(listingService.deleteById(anyLong(), any(HttpServletRequest.class))).thenReturn(deleteResponse);
 
         // When
         ResultActions resultActions = mockMvc.perform(delete("/api/v1/listings/{id}", 1L)
+                .requestAttr("userId", 1L)  // Add userId attribute to the request
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.responseMessage").value(listingDeleteResponse.getResponseMessage()));
-        verify(listingService, times(1)).deleteById(anyLong());
+                .andExpect(jsonPath("$.data.message").value(listingDeleteResponse.getResponseMessage()));
+        verify(listingService, times(1)).deleteById(anyLong(), any(HttpServletRequest.class));
     }
 }

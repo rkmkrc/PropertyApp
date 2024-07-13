@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,13 @@ class ListingServiceTest {
     @InjectMocks
     private ListingService listingService;
 
+    private MockHttpServletRequest request;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        request = new MockHttpServletRequest();
+        request.setAttribute("userId", 1L);
     }
 
     @Test
@@ -127,7 +132,6 @@ class ListingServiceTest {
         verify(listingRepository, times(1)).findById(listingId);
         assertNotNull(response);
         assertTrue(response.getMessage().equals(PropertyAppConstants.SUCCESS));
-
     }
 
     @Test
@@ -152,14 +156,14 @@ class ListingServiceTest {
         Long listingId = 1L;
         Listing listing = Instancio.of(Listing.class).create();
 
-        when(listingRepository.findById(listingId)).thenReturn(Optional.of(listing));
+        when(listingRepository.findByIdAndUserId(listingId, 1L)).thenReturn(Optional.of(listing));
         doNothing().when(listingRepository).delete(listing);
 
         // When
-        GenericResponse<ListingDeleteResponse> response = listingService.deleteById(listingId);
+        GenericResponse<ListingDeleteResponse> response = listingService.deleteById(listingId, request);
 
         // Then
-        verify(listingRepository, times(1)).findById(listingId);
+        verify(listingRepository, times(1)).findByIdAndUserId(listingId, 1L);
         verify(listingRepository, times(1)).delete(listing);
         assertNotNull(response);
         assertTrue(response.getMessage().equals(PropertyAppConstants.SUCCESS));
@@ -170,15 +174,15 @@ class ListingServiceTest {
         // Given
         Long listingId = 1L;
 
-        when(listingRepository.findById(listingId)).thenReturn(Optional.empty());
+        when(listingRepository.findByIdAndUserId(listingId, 1L)).thenReturn(Optional.empty());
 
         // When
-        ListingException.ListingNotFoundException exception = assertThrows(ListingException.ListingNotFoundException.class, () -> {
-            listingService.deleteById(listingId);
+        ListingException.ListingNotFoundOrYouDontHavePermissionException exception = assertThrows(ListingException.ListingNotFoundOrYouDontHavePermissionException.class, () -> {
+            listingService.deleteById(listingId, request);
         });
 
         // Then
-        assertEquals(ListingExceptionMessage.LISTING_NOT_FOUND + " with id: " + listingId, exception.getMessage());
-        verify(listingRepository, times(1)).findById(listingId);
+        assertEquals(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION , exception.getMessage());
+        verify(listingRepository, times(1)).findByIdAndUserId(listingId, 1L);
     }
 }
