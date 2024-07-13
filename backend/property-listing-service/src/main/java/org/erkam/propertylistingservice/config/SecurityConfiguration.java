@@ -1,9 +1,8 @@
-package org.erkam.propertyuserservice.config;
+package org.erkam.propertylistingservice.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,24 +18,18 @@ public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
-    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
-                        // NOTE: Endpoints which includes PASSIVE listings and Packages that user owned is secured.
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users/listings/**",
-                                "/api/v1/users/packages/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/listings",
-                                "/api/v1/users/packages/**",
-                                "api/v1/users/listings/passive").authenticated()
-                        // Allow all other endpoints
+                        // NOTE: Secured the endpoints that returns the listing with PASSIVE status.
+                        .requestMatchers(HttpMethod.GET, "/api/v1/listings/user/{userId}/passive",
+                                "/api/v1/listings/user/{userId}").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

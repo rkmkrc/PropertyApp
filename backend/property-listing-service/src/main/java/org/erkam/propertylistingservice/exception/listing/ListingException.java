@@ -24,5 +24,9 @@ public class ListingException extends RuntimeException {
     public static class NoActiveListingsFoundForThisUserException extends ListingException {
         public NoActiveListingsFoundForThisUserException(String message) { super(message); }
     }
+
+    public static class NoPassiveListingsFoundForThisUserException extends ListingException {
+        public NoPassiveListingsFoundForThisUserException(String message) { super(message); }
+    }
 }
 

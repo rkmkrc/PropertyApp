@@ -38,15 +38,23 @@ public class UserException extends RuntimeException {
     }
 
     public static class UserIsNotEligibleToAddListing extends UserException {
-        public UserIsNotEligibleToAddListing(String message) { super(message); }
+        public UserIsNotEligibleToAddListing(String message) {super(message);}
     }
 
     public static class UserHasNotAnyPackagesException extends UserException {
-        public UserHasNotAnyPackagesException(String message, String email) { super(message + " with email: " + email); }
+        public UserHasNotAnyPackagesException(String message, String email) {super(message + " with email: " + email);}
     }
 
     public static class UserHasNotAnyListingsException extends UserException {
-        public UserHasNotAnyListingsException(String message) { super(message); }
+        public UserHasNotAnyListingsException(String message) {super(message);}
+    }
+
+    public static class UserHasNotAnyActiveListingsException extends UserException {
+        public UserHasNotAnyActiveListingsException(String message) {super(message);}
+    }
+
+    public static class UserHasNotAnyPassiveListingsException extends UserException {
+        public UserHasNotAnyPassiveListingsException(String message) {super(message);}
     }
 }
 

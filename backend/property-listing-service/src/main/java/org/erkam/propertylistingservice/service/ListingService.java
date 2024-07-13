@@ -115,4 +115,18 @@ public class ListingService {
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_LISTINGS_OF_THIS_USER_FETCHED, userId));
         return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
     }
+
+    // This method requires authentication
+    // Get only passive listings from database of a user specified by userId
+    // if there are no data on database then throw an exception,
+    // else convert listings to ListingGetResponse list then return it.
+    public GenericResponse<List<ListingGetResponse>> getPassiveListingsByUserId(Long userId) {
+        List<Listing> listings = listingRepository.findListingsByUserIdAndStatus(userId, ListingStatus.PASSIVE);
+        if (listings.isEmpty()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.NO_PASSIVE_LISTINGS_FOUND_FOR_THIS_USER, userId));
+            throw new ListingException.NoPassiveListingsFoundForThisUserException(ListingExceptionMessage.NO_PASSIVE_LISTINGS_FOUND_FOR_THIS_USER);
+        }
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_PASSIVE_LISTINGS_OF_THIS_USER_FETCHED, userId));
+        return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
+    }
 }

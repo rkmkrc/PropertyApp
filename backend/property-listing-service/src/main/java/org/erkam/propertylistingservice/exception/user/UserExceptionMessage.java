@@ -1,4 +1,4 @@
-package org.erkam.propertyuserservice.exception.user;
+package org.erkam.propertylistingservice.exception.user;
 
 public class UserExceptionMessage {
     public static final String NO_DATA_ON_DATABASE = "No data found on database";

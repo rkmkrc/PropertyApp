@@ -203,8 +203,8 @@ public class UserController {
     }
 
     @Operation(
-            description = "Get endpoint of passive listings of user.",
-            summary = "Get passive listings of user.",
+            description = "Get endpoint of all listings of user.",
+            summary = "Get all listings of user.",
             responses = {
                     @ApiResponse(
                             description = "Unauthorized.",
@@ -227,5 +227,59 @@ public class UserController {
     @GetMapping("/listings")
     public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getAllListings() {
         return new ResponseEntity<>(userService.getAllListings(), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Get endpoint of passive listings of user.",
+            summary = "Get passive listings of user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Forbidden.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request.",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    )
+            }
+    )
+    @GetMapping("/listings/passive")
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getPassiveListings() {
+        return new ResponseEntity<>(userService.getPassiveListings(), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Get endpoint of active listings of user.",
+            summary = "Get active listings of user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "401"
+                    ),
+                    @ApiResponse(
+                            description = "Forbidden.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request.",
+                            responseCode = "400"
+                    ),
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    )
+            }
+    )
+    @GetMapping("/listings/active")
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListings() {
+        return new ResponseEntity<>(userService.getActiveListings(), HttpStatus.OK);
     }
 }

@@ -18,4 +18,10 @@ public interface ListingClient {
 
     @GetMapping("user/{userId}")
     ResponseEntity<GenericResponse<List<ListingGetResponse>>> getListingsByUserId(@PathVariable Long userId);
+
+    @GetMapping("/user/{userId}/active")
+    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListingsOfUser(@PathVariable Long userId);
+
+    @GetMapping("/user/{userId}/passive")
+    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getPassiveListingsOfUser(@PathVariable Long userId);
 }

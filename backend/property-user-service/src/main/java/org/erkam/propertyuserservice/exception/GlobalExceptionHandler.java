@@ -54,6 +54,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UserException.UserHasNotAnyPassiveListingsException.class)
+    public ResponseEntity<?> handleUserHasNotAnyPassiveListingsException(UserException.UserHasNotAnyPassiveListingsException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.NOT_FOUND.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(UserException.ListingCouldNotCreatedException.class)
     public ResponseEntity<?> handleListingCouldNotCreatedException(UserException.ListingCouldNotCreatedException exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), request.getDescription(false));
@@ -114,9 +120,16 @@ public class GlobalExceptionHandler {
     }
     // CLASS: END - Exception
 
+    // TODO: Handle extractSimplifiedMessage() more elegant later
     private String extractSimplifiedMessage(String message) {
         if (message.contains("Duplicate listing found")) {
             return "Duplicate listing found.";
+        } else if (message.contains("No listing found")) {
+            return "No listings found.";
+        } else if (message.contains("No passive listings found")) {
+            return "No passive listings found.";
+        } else if (message.contains("No active listings found")) {
+            return "No active listings found.";
         }
         return message;
     }

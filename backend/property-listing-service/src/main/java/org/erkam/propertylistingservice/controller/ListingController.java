@@ -147,6 +147,25 @@ public class ListingController {
                             responseCode = "200"
                     ),
                     @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @GetMapping("/user/{userId}/active")
+    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListingsOfUser(@PathVariable Long userId) {
+        return new ResponseEntity<>(listingService.getActiveListingsByUserId(userId), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Get endpoint to fetch passive listings of a user. Only authorized usage.",
+            summary = "Get passive listings of a user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
                             description = "Unauthorized.",
                             responseCode = "403"
                     ),
@@ -156,8 +175,8 @@ public class ListingController {
                     )
             }
     )
-    @GetMapping("/user/{userId}/active")
-    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListingsOfUser(@PathVariable("userId") Long userId) {
-        return new ResponseEntity<>(listingService.getActiveListingsByUserId(userId), HttpStatus.OK);
+    @GetMapping("/user/{userId}/passive")
+    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getPassiveListingsOfUser(@PathVariable Long userId) {
+        return new ResponseEntity<>(listingService.getPassiveListingsByUserId(userId), HttpStatus.OK);
     }
 }

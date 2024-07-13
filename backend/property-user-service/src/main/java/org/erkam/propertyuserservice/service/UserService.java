@@ -235,4 +235,56 @@ public class UserService {
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.ALL_LISTINGS_OF_THE_USER_ARE_FETCHED, user.getEmail()));
         return GenericResponse.success(response);
     }
+
+    // Check user is authenticated first,
+    // then call listing service, then return the response.
+    public GenericResponse<List<ListingGetResponse>> getPassiveListings() {
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException.UserIsNotAuthenticatedException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        List<ListingGetResponse> response = listingService.getPassiveListingsOfUser(user.getId());
+
+        if (response.size() == 0) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_HAS_NOT_ANY_PASSIVE_LISTINGS));
+            throw new UserException.UserHasNotAnyPassiveListingsException(UserExceptionMessage.USER_HAS_NOT_ANY_PASSIVE_LISTINGS);
+        }
+
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.ALL_PASSIVE_LISTINGS_OF_THE_USER_ARE_FETCHED, user.getEmail()));
+        return GenericResponse.success(response);
+    }
+
+    // Check user is authenticated first,
+    // then call listing service, then return the response.
+    public GenericResponse<List<ListingGetResponse>> getActiveListings() {
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException.UserIsNotAuthenticatedException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        List<ListingGetResponse> response = listingService.getActiveListingsOfUser(user.getId());
+
+        if (response.size() == 0) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_HAS_NOT_ANY_ACTIVE_LISTINGS));
+            throw new UserException.UserHasNotAnyActiveListingsException(UserExceptionMessage.USER_HAS_NOT_ANY_ACTIVE_LISTINGS);
+        }
+
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.ALL_ACTIVE_LISTINGS_OF_THE_USER_ARE_FETCHED, user.getEmail()));
+        return GenericResponse.success(response);
+    }
 }

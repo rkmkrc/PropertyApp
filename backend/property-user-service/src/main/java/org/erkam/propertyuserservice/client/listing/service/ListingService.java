@@ -44,4 +44,26 @@ public class ListingService {
         return response.getBody().getData();
     }
 
+    public List<ListingGetResponse> getActiveListingsOfUser(Long userId) {
+
+        ResponseEntity<GenericResponse<List<ListingGetResponse>>> response = listingClient.getActiveListingsOfUser(userId);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_HAS_NOT_ANY_ACTIVE_LISTINGS));
+            log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
+            throw new UserException.UserHasNotAnyActiveListingsException(response.getBody().getMessage());
+        }
+        return response.getBody().getData();
+    }
+
+    public List<ListingGetResponse> getPassiveListingsOfUser(Long userId) {
+
+        ResponseEntity<GenericResponse<List<ListingGetResponse>>> response = listingClient.getPassiveListingsOfUser(userId);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_HAS_NOT_ANY_PASSIVE_LISTINGS));
+            log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
+            throw new UserException.UserHasNotAnyPassiveListingsException(response.getBody().getMessage());
+        }
+        return response.getBody().getData();
+    }
+
 }
