@@ -5,8 +5,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateStatusRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateStatusResponse;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
@@ -305,5 +307,28 @@ public class UserController {
     @DeleteMapping("/listings/{id}")
     public ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteListingById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.deleteListingById(id), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Update the status endpoint of a listing of a user.",
+            summary = "Update the status of a listing of a user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @PutMapping("/listings/status")
+    public ResponseEntity<GenericResponse<ListingUpdateStatusResponse>> updateStatusOfAListing(@RequestBody ListingUpdateStatusRequest request) {
+        return new ResponseEntity<>(userService.updateTheStatusOfTheListing(request), HttpStatus.OK);
     }
 }

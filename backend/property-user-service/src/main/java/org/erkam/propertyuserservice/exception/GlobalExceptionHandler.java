@@ -4,6 +4,7 @@ import feign.FeignException;
 import org.erkam.propertyuserservice.error.ErrorDetails;
 import org.erkam.propertyuserservice.exception.jwt.JwtException;
 import org.erkam.propertyuserservice.exception.jwt.JwtExceptionMessage;
+import org.erkam.propertyuserservice.exception.listing.ListingException;
 import org.erkam.propertyuserservice.exception.product.PackageException;
 import org.erkam.propertyuserservice.exception.product.PackageExceptionMessage;
 import org.erkam.propertyuserservice.exception.user.UserException;
@@ -72,6 +73,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserException.ListingStatusCouldNotUpdatedException.class)
+    public ResponseEntity<?> handleListingStatusCouldNotUpdatedException(UserException.ListingStatusCouldNotUpdatedException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(UserException.UserIsNotEligibleToAddListing.class)
     public ResponseEntity<?> handleUserIsNotEligibleToAddListing(UserException.UserIsNotEligibleToAddListing exception, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
@@ -110,6 +117,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
     // CLASS: END - PackageException
+    // CLASS: ListingException
+    @ExceptionHandler(ListingException.InvalidTypeOfStatusException.class)
+    public ResponseEntity<ErrorDetails> handleInvalidTypeOfStatusException(ListingException.InvalidTypeOfStatusException exception, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(HttpStatus.BAD_REQUEST.value(), exception.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    // CLASS: END - ListingException
     // CLASS: FeignException
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorDetails> handleFeignStatusException(FeignException exception, WebRequest request) {
@@ -137,7 +151,7 @@ public class GlobalExceptionHandler {
         } else if (message.contains("No active listings found")) {
             return "No active listings found.";
         } else if (message.contains("Listing not found or you don't have permission")) {
-            return "Listing not found or you don't have permission to delete";
+            return "Listing not found or you don't have permission";
         }
         return message;
     }

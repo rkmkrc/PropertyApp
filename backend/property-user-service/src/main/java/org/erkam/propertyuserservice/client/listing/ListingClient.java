@@ -2,8 +2,10 @@ package org.erkam.propertyuserservice.client.listing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateStatusRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateStatusResponse;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.dto.response.listing.ListingGetResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,4 +31,7 @@ public interface ListingClient {
 
     @DeleteMapping("/{id}")
     ResponseEntity<GenericResponse<ListingDeleteResponse>> deleteById(@PathVariable Long id);
+
+    @PutMapping("/user/status")
+    ResponseEntity<GenericResponse<ListingUpdateStatusResponse>> updateTheStatusOfTheListing(@RequestBody ListingUpdateStatusRequest request);
 }

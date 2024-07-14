@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertylistingservice.dto.request.listing.ListingSaveRequest;
+import org.erkam.propertylistingservice.dto.request.listing.ListingUpdateStatusRequest;
 import org.erkam.propertylistingservice.dto.response.GenericResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingDeleteResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingGetResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingSaveResponse;
+import org.erkam.propertylistingservice.dto.response.listing.ListingUpdateStatusResponse;
 import org.erkam.propertylistingservice.service.ListingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -154,7 +156,7 @@ public class ListingController {
             }
     )
     @GetMapping("/user/{userId}/active")
-    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListingsOfUser(@PathVariable Long userId) {
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getActiveListingsOfUser(@PathVariable Long userId) {
         return new ResponseEntity<>(listingService.getActiveListingsByUserId(userId), HttpStatus.OK);
     }
 
@@ -177,7 +179,30 @@ public class ListingController {
             }
     )
     @GetMapping("/user/{userId}/passive")
-    ResponseEntity<GenericResponse<List<ListingGetResponse>>> getPassiveListingsOfUser(@PathVariable Long userId) {
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getPassiveListingsOfUser(@PathVariable Long userId) {
         return new ResponseEntity<>(listingService.getPassiveListingsByUserId(userId), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Put endpoint change the status of the listing of a user. Only authorized usage.",
+            summary = "Update the status of a listing of a user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @PutMapping("/user/status")
+    public ResponseEntity<GenericResponse<ListingUpdateStatusResponse>> updateTheStatusOfTheListing(@RequestBody ListingUpdateStatusRequest request, HttpServletRequest httpRequest) {
+        return new ResponseEntity<>(listingService.changeStatusOfTheListing(request, httpRequest), HttpStatus.OK);
     }
 }

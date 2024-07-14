@@ -8,4 +8,5 @@ public class ListingSuccessMessage {
     public static final String LISTING_FETCHED = "Listing fetched";
     public static final String ALL_LISTINGS_OF_THIS_USER_FETCHED = "All listings of this user are fetched";
     public static final String ALL_PASSIVE_LISTINGS_OF_THIS_USER_FETCHED = "All passive listings of this user are fetched";
+    public static final String LISTING_STATUS_UPDATED = "Listing status updated";
 }

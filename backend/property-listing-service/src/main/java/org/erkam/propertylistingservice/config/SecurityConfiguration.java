@@ -28,6 +28,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/listings/user/{userId}/passive",
                                 "/api/v1/listings/user/{userId}").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/listings/{id}").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/listings/user/status").authenticated()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

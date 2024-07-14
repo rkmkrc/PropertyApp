@@ -60,5 +60,9 @@ public class UserException extends RuntimeException {
     public static class ListingCouldNotDeletedException extends UserException {
         public ListingCouldNotDeletedException(String message) {super(message);}
     }
+
+    public static class ListingStatusCouldNotUpdatedException extends UserException {
+        public ListingStatusCouldNotUpdatedException(String message) {super(message);}
+    }
 }
 

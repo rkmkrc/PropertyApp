@@ -8,10 +8,12 @@ import org.erkam.propertylistingservice.constants.LogMessage;
 import org.erkam.propertylistingservice.constants.enums.MessageStatus;
 import org.erkam.propertylistingservice.dto.converter.ListingConverter;
 import org.erkam.propertylistingservice.dto.request.listing.ListingSaveRequest;
+import org.erkam.propertylistingservice.dto.request.listing.ListingUpdateStatusRequest;
 import org.erkam.propertylistingservice.dto.response.GenericResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingDeleteResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingGetResponse;
 import org.erkam.propertylistingservice.dto.response.listing.ListingSaveResponse;
+import org.erkam.propertylistingservice.dto.response.listing.ListingUpdateStatusResponse;
 import org.erkam.propertylistingservice.exception.listing.ListingException;
 import org.erkam.propertylistingservice.exception.listing.ListingExceptionMessage;
 import org.erkam.propertylistingservice.model.Listing;
@@ -131,5 +133,24 @@ public class ListingService {
         }
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_PASSIVE_LISTINGS_OF_THIS_USER_FETCHED, userId));
         return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
+    }
+
+    // This method requires authentication
+    // Update the status of a listing if it belongs to the currently authenticated user
+    // if there are no data on database then throw an exception,
+    // else create a ListingUpdateStatusResponse then return it.
+    public GenericResponse<ListingUpdateStatusResponse> changeStatusOfTheListing(ListingUpdateStatusRequest request, HttpServletRequest httpRequest) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
+
+        Listing listing = listingRepository.findByIdAndUserId(request.getListingId(), userId).orElseThrow(() -> {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, request.getListingId()));
+            return new ListingException.ListingNotFoundOrYouDontHavePermissionException(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, request.getListingId());
+        });
+
+        listing.setStatus(request.getStatus());
+        listingRepository.save(listing);
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_STATUS_UPDATED, request.getListingId()));
+
+        return GenericResponse.success(ListingUpdateStatusResponse.of(request));
     }
 }
