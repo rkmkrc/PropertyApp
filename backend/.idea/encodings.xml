@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/property-auth-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/property-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/property-listing-review-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/property-listing-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/property-payment-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/property-registry/src/main/java" charset="UTF-8" />

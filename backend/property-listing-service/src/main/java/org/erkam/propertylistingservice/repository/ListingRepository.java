@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface ListingRepository extends JpaRepository<Listing, Long> {
 
     // This method checks for a duplicate listing, ignoring the id values.
-    Optional<Listing> findByTitleAndPriceAndAreaAndDescriptionAndTypeAndStatus(String title, BigDecimal price, Integer area, String description, PropertyType type, ListingStatus status);
+    Optional<Listing> findByTitleAndPriceAndAreaAndDescriptionAndType(String title, BigDecimal price, Integer area, String description, PropertyType type);
 
     List<Listing> findListingsByUserId(Long userId);
 

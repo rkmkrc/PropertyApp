@@ -8,21 +8,23 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="property-user-service" />
+        <module name="property-listing-review-service" />
         <module name="property-listing-service" />
         <module name="property-gateway" />
-        <module name="property-service" />
         <module name="property-registry" />
         <module name="property-payment-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="property-auth-service" target="17" />
+      <module name="property-service" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="property-auth-service" options="-parameters" />
       <module name="property-gateway" options="-parameters" />
+      <module name="property-listing-review-service" options="-parameters" />
       <module name="property-listing-service" options="-parameters" />
       <module name="property-payment-service" options="-parameters" />
       <module name="property-registry" options="-parameters" />

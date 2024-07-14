@@ -16,6 +16,8 @@ import org.erkam.propertylistingservice.exception.listing.ListingException;
 import org.erkam.propertylistingservice.exception.listing.ListingExceptionMessage;
 import org.erkam.propertylistingservice.model.Listing;
 import org.erkam.propertylistingservice.model.enums.ListingStatus;
+import org.erkam.propertylistingservice.producer.ListingReviewProducer;
+import org.erkam.propertylistingservice.producer.dto.ListingDto;
 import org.erkam.propertylistingservice.repository.ListingRepository;
 import org.springframework.stereotype.Service;
 
@@ -26,17 +28,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ListingService {
     private final ListingRepository listingRepository;
+    private final ListingReviewProducer listingReviewProducer;
 
-    // Check if there is a duplicate listing exists or not, if exists then throw an exception
-    // else save it return a ListingSaveResponse
+    // Check if there is a duplicate listing exists or not, if exists then throw an exception else
+    // add the listing to the listing review queue to let Listing Review Service to change the
+    // status from IN_REVIEW to ACTIVE
+    // then save it return a ListingSaveResponse
     public GenericResponse<ListingSaveResponse> save(ListingSaveRequest request) {
         Listing listing = ListingConverter.toListing(request);
+        System.out.println("CHECHKING");
         if (isDuplicate(listing)) {
+            System.out.println("DUPLICATE");
+
             log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle()));
             throw new ListingException.DuplicateListingException(ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle());
         }
-        listingRepository.save(listing);
+        listing = listingRepository.save(listing);
+
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_CREATED, request.getTitle()));
+        listingReviewProducer.sendNotification(new ListingDto(listing.getId()));
         return GenericResponse.success(ListingSaveResponse.of(request));
     }
 
@@ -95,13 +105,13 @@ public class ListingService {
     // This method checks for a duplicate listing in repository
     // returns true if give listing parameter is exactly the same except the id field of a listing.
     private boolean isDuplicate(Listing listing) {
-        return listingRepository.findByTitleAndPriceAndAreaAndDescriptionAndTypeAndStatus(
+        System.out.println("IN IS DUPLICATE");
+        return listingRepository.findByTitleAndPriceAndAreaAndDescriptionAndType(
                 listing.getTitle(),
                 listing.getPrice(),
                 listing.getArea(),
                 listing.getDescription(),
-                listing.getType(),
-                listing.getStatus()
+                listing.getType()
         ).isPresent();
     }
 
