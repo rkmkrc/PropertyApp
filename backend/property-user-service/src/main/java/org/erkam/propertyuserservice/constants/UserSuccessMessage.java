@@ -12,4 +12,5 @@ public class UserSuccessMessage {
     public static final String ALL_PASSIVE_LISTINGS_OF_THE_USER_ARE_FETCHED = "All passive listings of the user are fetched";
     public static final String LISTING_DELETED = "Listing deleted";
     public static final String LISTING_STATUS_UPDATED = "Listing status updated";
+    public static final String LISTING_UPDATED = "Listing updated";
 }

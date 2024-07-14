@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateStatusRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateStatusResponse;
 import org.erkam.propertyuserservice.dto.request.user.BuyPackageRequest;
 import org.erkam.propertyuserservice.dto.request.user.UserSaveRequest;
@@ -310,7 +312,7 @@ public class UserController {
     }
 
     @Operation(
-            description = "Update the status endpoint of a listing of a user.",
+            description = "Update endpoint of the status a listing of a user.",
             summary = "Update the status of a listing of a user.",
             responses = {
                     @ApiResponse(
@@ -330,5 +332,28 @@ public class UserController {
     @PutMapping("/listings/status")
     public ResponseEntity<GenericResponse<ListingUpdateStatusResponse>> updateStatusOfAListing(@RequestBody ListingUpdateStatusRequest request) {
         return new ResponseEntity<>(userService.updateTheStatusOfTheListing(request), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Put endpoint to update a listing of a user.",
+            summary = "Update a listing of a user.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @PutMapping("/listings")
+    public ResponseEntity<GenericResponse<ListingUpdateResponse>> updateTheListing(@RequestBody ListingUpdateRequest request) {
+        return new ResponseEntity<>(userService.updateTheListing(request), HttpStatus.OK);
     }
 }

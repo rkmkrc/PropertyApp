@@ -16,4 +16,5 @@ public class UserExceptionMessage {
     public static final String USER_HAS_NOT_ANY_PASSIVE_LISTINGS = "User has not any passive listings";
     public static final String LISTING_COULD_NOT_DELETED = "Listing could not deleted";
     public static final String LISTING_STATUS_COULD_NOT_UPDATED = "Listing status could not updated";
+    public static final String LISTING_COULD_NOT_UPDATED = "Listing could not updated";
 }

@@ -3,9 +3,11 @@ package org.erkam.propertyuserservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateStatusRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateStatusResponse;
 import org.erkam.propertyuserservice.client.listing.service.ListingService;
 import org.erkam.propertyuserservice.client.payment.dto.request.PaymentRequest;
@@ -329,6 +331,27 @@ public class UserService {
 
         ListingUpdateStatusResponse response = listingService.updateTheStatusOfTheListing(request);
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.LISTING_STATUS_UPDATED, request.getStatus().name()));
+
+        return GenericResponse.success(response);
+    }
+
+    // Check user is authenticated first,
+    // then call listing service, then return the response.
+    public GenericResponse<ListingUpdateResponse> updateTheListing(ListingUpdateRequest request) {
+        // Check Authentication of the user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.USER_IS_NOT_AUTHENTICATED));
+            throw new UserException.UserIsNotAuthenticatedException(UserExceptionMessage.USER_IS_NOT_AUTHENTICATED);
+        }
+
+        // Get User
+        String userEmail = authentication.getName();
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        ListingUpdateResponse response = listingService.updateTheListing(request);
+        log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.LISTING_UPDATED, request.getTitle()));
 
         return GenericResponse.success(response);
     }

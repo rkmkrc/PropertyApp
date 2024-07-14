@@ -4,9 +4,9 @@ import lombok.*;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListingSaveResponse {
+@Builder
+public class ListingUpdateResponse {
     private String responseMessage;
 }

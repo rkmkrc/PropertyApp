@@ -64,5 +64,9 @@ public class UserException extends RuntimeException {
     public static class ListingStatusCouldNotUpdatedException extends UserException {
         public ListingStatusCouldNotUpdatedException(String message) {super(message);}
     }
+
+    public static class ListingCouldNotUpdatedException extends UserException {
+        public ListingCouldNotUpdatedException(String message) {super(message);}
+    }
 }
 

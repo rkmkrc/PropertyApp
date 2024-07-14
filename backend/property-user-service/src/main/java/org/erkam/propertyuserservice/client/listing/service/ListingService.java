@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyuserservice.client.listing.ListingClient;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateStatusRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateStatusResponse;
 import org.erkam.propertyuserservice.constants.LogMessage;
 import org.erkam.propertyuserservice.constants.enums.MessageStatus;
@@ -88,6 +90,17 @@ public class ListingService {
             log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.LISTING_STATUS_COULD_NOT_UPDATED));
             log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
             throw new UserException.ListingStatusCouldNotUpdatedException(response.getBody().getMessage());
+        }
+        return response.getBody().getData();
+    }
+
+    public ListingUpdateResponse updateTheListing(ListingUpdateRequest request) {
+
+        ResponseEntity<GenericResponse<ListingUpdateResponse>> response = listingClient.updateTheListing(request);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.LISTING_COULD_NOT_UPDATED));
+            log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
+            throw new UserException.ListingCouldNotUpdatedException(response.getBody().getMessage());
         }
         return response.getBody().getData();
     }

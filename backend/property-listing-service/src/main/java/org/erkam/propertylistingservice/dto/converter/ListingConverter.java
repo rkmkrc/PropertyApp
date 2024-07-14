@@ -2,6 +2,7 @@ package org.erkam.propertylistingservice.dto.converter;
 
 
 import org.erkam.propertylistingservice.dto.request.listing.ListingSaveRequest;
+import org.erkam.propertylistingservice.dto.request.listing.ListingUpdateRequest;
 import org.erkam.propertylistingservice.dto.response.listing.ListingGetResponse;
 import org.erkam.propertylistingservice.model.Listing;
 import org.erkam.propertylistingservice.model.enums.ListingStatus;

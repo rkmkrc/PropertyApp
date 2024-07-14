@@ -2,6 +2,7 @@ package org.erkam.propertylistingservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.erkam.propertylistingservice.dto.request.listing.ListingUpdateRequest;
 import org.erkam.propertylistingservice.model.enums.ListingStatus;
 import org.erkam.propertylistingservice.model.enums.PropertyType;
 
@@ -37,4 +38,13 @@ public class Listing {
     private ListingStatus status;
     @Column(name = "published_date")
     private LocalDate publishedDate;
+
+    public Listing updateByRequest(ListingUpdateRequest request) {
+        this.setTitle(request.getTitle());
+        this.setDescription(request.getDescription());
+        this.setPrice(request.getPrice());
+        this.setArea(request.getArea());
+        this.setType(request.getType());
+        return this;
+    }
 }

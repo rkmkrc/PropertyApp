@@ -2,9 +2,11 @@ package org.erkam.propertyuserservice.client.listing;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
+import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateStatusRequest;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingDeleteResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingSaveResponse;
+import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateResponse;
 import org.erkam.propertyuserservice.client.listing.dto.response.ListingUpdateStatusResponse;
 import org.erkam.propertyuserservice.dto.response.GenericResponse;
 import org.erkam.propertyuserservice.dto.response.listing.ListingGetResponse;
@@ -20,7 +22,7 @@ public interface ListingClient {
     @PostMapping
     ResponseEntity<GenericResponse<ListingSaveResponse>> save(@RequestBody ListingSaveRequest request);
 
-    @GetMapping("user/{userId}")
+    @GetMapping("/user/{userId}")
     ResponseEntity<GenericResponse<List<ListingGetResponse>>> getListingsByUserId(@PathVariable Long userId);
 
     @GetMapping("/user/{userId}/active")
@@ -34,4 +36,7 @@ public interface ListingClient {
 
     @PutMapping("/user/status")
     ResponseEntity<GenericResponse<ListingUpdateStatusResponse>> updateTheStatusOfTheListing(@RequestBody ListingUpdateStatusRequest request);
+
+    @PutMapping
+    ResponseEntity<GenericResponse<ListingUpdateResponse>> updateTheListing(@RequestBody ListingUpdateRequest request);
 }

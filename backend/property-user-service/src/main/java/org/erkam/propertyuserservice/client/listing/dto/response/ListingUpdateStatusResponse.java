@@ -10,10 +10,4 @@ import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateSta
 @Builder
 public class ListingUpdateStatusResponse {
     private String responseMessage;
-    public static ListingUpdateStatusResponse of(ListingUpdateStatusRequest request) {
-        return ListingUpdateStatusResponse.builder()
-                .responseMessage(
-                        "Listing status updated as "+ request.getStatus() + " successfully.")
-                .build();
-    }
 }
