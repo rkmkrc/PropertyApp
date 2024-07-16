@@ -58,12 +58,12 @@
   color: #333;
 }
 
-.location {
+.email {
   color: #666;
   margin: 8px 0;
 }
 
-.bio {
-  margin: 0;
-  color: #333;
+.phone {
+  margin: 20px;
+  color: #666;
 }

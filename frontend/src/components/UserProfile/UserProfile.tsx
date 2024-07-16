@@ -26,10 +26,10 @@ const UserProfile: React.FC<User> = ({ name, surname, email, phoneNumber }) => {
           <button className={styles.editButton}>Edit Profile</button>
           <button className={styles.publicViewButton}>Public View</button>
         </div>
-        <div className={styles.location}>
-          <i className="fas fa-envelope"></i> {email}
+        <div className={styles.email}>
+          Email: {email}
+          <text className={styles.phone}>Phone: {phoneNumber}</text>
         </div>
-        <p className={styles.bio}>{phoneNumber}</p>
       </div>
     </div>
   );
