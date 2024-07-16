@@ -15,6 +15,10 @@ type Listing = {
   publishedDate: string;
 };
 
+const formatPrice = (price: number) => {
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 const ListingCard: React.FC<Listing> = ({
   title,
   description,
@@ -24,6 +28,7 @@ const ListingCard: React.FC<Listing> = ({
   area,
   publishedDate,
 }) => {
+  const formattedPrice = formatPrice(price);
   return (
     <div className={styles.card}>
       <div className={styles.imageWrapper}>
@@ -37,12 +42,11 @@ const ListingCard: React.FC<Listing> = ({
       </div>
       <div className={styles.details}>
         <h2 className={styles.title}>{title}</h2>
-        <p className={styles.description}>{description}</p>
         <p className={styles.info}>
-          <span>Type: {type}</span>
+          <span>Type: {type}</span> | <span>Area: {area} sq ft</span>
         </p>
-        <p className={styles.info}>
-          <span>Price: ${price}</span> | <span>Area: {area} sq ft</span>
+        <p className={styles.price}>
+          <span>Price: {formattedPrice} TL</span>
         </p>
         <div className={styles.footer}>
           <span>

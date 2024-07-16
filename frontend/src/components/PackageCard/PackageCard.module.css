@@ -1,0 +1,52 @@
+/* components/PackageCard/PackageCard.module.css */
+
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 2px 5px 6px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px;
+  max-width: 300px;
+  transition: color 0.3s ease;
+}
+
+.details {
+  text-align: center;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.icon {
+  color: gold; 
+  font-size: 36px;
+  transition: color 0.3s ease;
+}
+
+.type {
+  font-size: 16px;
+  color: #0070f3;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.date {
+  font-size: 14px;
+  color: #555;
+}
+
+
+.card:hover {
+  background-color: #f0f0f0; /* Change background color on hover */
+}
+
+.icon:hover {
+  color: darkgoldenrod; /* Change icon color on hover */
+}

@@ -1,15 +1,21 @@
 /* src/app/dashboard/DashboardPage.module.css */
 
 .dashboardContainer {
-  background-color: aquamarine;
+
   padding: 20px;
 }
 
 .gridContainer {
-  background-color: rebeccapurple;
-  margin: 10px 0px;
+
+  margin: 10px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
   align-items: start;
+}
+
+.packageGridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0px;
 }
