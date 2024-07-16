@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { setCookie } from 'nookies';
 
@@ -7,11 +6,18 @@ export async function POST(request: Request) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
+  // Email and password validation
   if (!email || !password) {
     return NextResponse.json({ success: false, message: 'All fields are required' }, { status: 400 });
   }
 
-  const backendLoginUrl = `http://localhost:8080/api/v1/auth/login`
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return NextResponse.json({ success: false, message: 'Please enter a valid email address' }, { status: 400 });
+  }
+
+  const backendLoginUrl = `http://localhost:8080/api/v1/auth/login`;
 
   const response = await fetch(backendLoginUrl, {
     method: 'POST',
@@ -33,6 +39,6 @@ export async function POST(request: Request) {
     });
     return res;
   } else {
-    return NextResponse.json({ success: false, message: data.message || 'Login failed'}, { status: response.status });
+    return NextResponse.json({ success: false, message: data.message || 'Login failed' }, { status: response.status });
   }
 }

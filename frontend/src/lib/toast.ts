@@ -13,7 +13,7 @@ export const showToast = (
     pauseOnHover: true,
     draggable: true,
     progress: undefined,
-    theme: localStorage.getItem("themeMode") === "dark" ? "dark" : "light",
+    theme: "colored",
   };
 
   if (type === "success") {
