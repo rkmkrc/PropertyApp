@@ -47,3 +47,17 @@
 .button:hover {
   background-color: #005bb5;
 }
+
+.accountText {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.registerLink {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}

@@ -1,45 +1,38 @@
-import { GetServerSidePropsContext } from "next";
-import { parseCookies } from "nookies";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { req } = context;
-  const cookies = parseCookies({ req });
-  const token = cookies.token || "";
+async function fetchUserData(token: string) {
+  const response = await fetch("http://localhost:3000/api/user", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/verify-token`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-
-  if (!response.ok) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {}, // pass any necessary data to the page component
-  };
+  return response.json();
 }
 
-const Dashboard = () => {
-  return <div>Welcome to the Dashboard!</div>;
-};
+export default async function DashboardPage() {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token")?.value;
 
-export default Dashboard;
+  if (!token) {
+    redirect("/login"); // Redirect to login if no token is found
+  }
+
+  const data = await fetchUserData(token);
+
+  if (!data.success) {
+    return <div>Failed to load user data: {data.message}</div>;
+  }
+
+  const user = data.user;
+
+  return (
+    <div>
+      <h1>Welcome, {user.name}!</h1>
+      <p>Email: {user.email}</p>
+      {/* Render other user-specific content here */}
+    </div>
+  );
+}

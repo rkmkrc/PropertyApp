@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import { showToast } from "@/lib/toast";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./register.module.css";
+import Link from "next/link";
 
 const RegisterPage: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -67,6 +68,12 @@ const RegisterPage: React.FC = () => {
           <button type="submit" className={styles.button}>
             Register
           </button>
+          <p className={styles.accountText}>
+            Already have an account?{" "}
+            <Link href="/login" className={styles.loginLink}>
+              Login here
+            </Link>
+          </p>
         </form>
       </div>
     </>

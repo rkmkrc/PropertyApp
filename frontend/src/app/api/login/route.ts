@@ -1,5 +1,5 @@
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { setCookie } from 'nookies';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -31,12 +31,8 @@ export async function POST(request: Request) {
 
   if (response.ok) {
     const res = NextResponse.json({ success: true, message: 'Login successful' });
-    setCookie({ res }, 'token', data.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 30 * 24 * 60 * 60,
-      path: '/',
-    });
+    const oneDay = 24 * 60 * 60 * 1000
+    cookies().set('token', data.token, { expires: Date.now() + oneDay })
     return res;
   } else {
     return NextResponse.json({ success: false, message: data.message || 'Login failed' }, { status: response.status });
