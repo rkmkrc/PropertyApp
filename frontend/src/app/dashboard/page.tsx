@@ -1,18 +1,8 @@
+import UserProfile from "@/components/UserProfile/UserProfile";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-async function fetchUserData(token: string) {
-  const response = await fetch("http://localhost:3000/api/user", {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.json();
-}
-
-export default async function DashboardPage() {
+const DashboardPage: React.FC = async () => {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -20,19 +10,27 @@ export default async function DashboardPage() {
     redirect("/login"); // Redirect to login if no token is found
   }
 
-  const data = await fetchUserData(token);
+  const response = await fetch(`http://localhost:8080/api/v1/users/user`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
+  const data = await response.json();
+  console.log(data);
   if (!data.success) {
     return <div>Failed to load user data: {data.message}</div>;
   }
 
-  const user = data.user;
+  const user = data.data;
 
   return (
     <div>
-      <h1>Welcome, {user.name}!</h1>
-      <p>Email: {user.email}</p>
-      {/* Render other user-specific content here */}
+      <h1>Dashboard</h1>
+      <UserProfile {...user} />
     </div>
   );
-}
+};
+
+export default DashboardPage;

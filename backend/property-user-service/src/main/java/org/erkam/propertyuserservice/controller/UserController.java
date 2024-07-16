@@ -3,6 +3,7 @@ package org.erkam.propertyuserservice.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingUpdateRequest;
@@ -78,6 +79,29 @@ public class UserController {
     @GetMapping
     public ResponseEntity<GenericResponse<List<UserGetResponse>>> getAll() {
         return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+    }
+
+    @Operation(
+            description = "Get endpoint to fetch a user by token.",
+            summary = "Get a user by token.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @GetMapping("/user")
+    public ResponseEntity<GenericResponse<UserGetResponse>> getCurrentUser(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.getCurrentUser(request), HttpStatus.OK);
     }
 
     @Operation(

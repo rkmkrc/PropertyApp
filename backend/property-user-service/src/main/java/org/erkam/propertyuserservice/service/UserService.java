@@ -1,5 +1,6 @@
 package org.erkam.propertyuserservice.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.erkam.propertyuserservice.client.listing.dto.request.ListingSaveRequest;
@@ -354,5 +355,11 @@ public class UserService {
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.LISTING_UPDATED, request.getTitle()));
 
         return GenericResponse.success(response);
+    }
+
+    public GenericResponse<UserGetResponse> getCurrentUser(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        System.out.println(userId);
+        return getById(userId);
     }
 }

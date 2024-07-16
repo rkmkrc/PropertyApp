@@ -36,10 +36,7 @@ public class ListingService {
     // then save it return a ListingSaveResponse
     public GenericResponse<ListingSaveResponse> save(ListingSaveRequest request) {
         Listing listing = ListingConverter.toListing(request);
-        System.out.println("CHECKING");
         if (isDuplicate(listing)) {
-            System.out.println("DUPLICATE");
-
             log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle()));
             throw new ListingException.DuplicateListingException(ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle());
         }

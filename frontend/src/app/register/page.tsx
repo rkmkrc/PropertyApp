@@ -6,8 +6,11 @@ import { showToast } from "@/lib/toast";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./register.module.css";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const RegisterPage: React.FC = () => {
+  const router = useRouter();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -23,6 +26,7 @@ const RegisterPage: React.FC = () => {
 
       if (resData.success) {
         showToast(resData.message, "success");
+        router.push("/dashboard");
       } else {
         showToast(resData.message, "error");
       }
