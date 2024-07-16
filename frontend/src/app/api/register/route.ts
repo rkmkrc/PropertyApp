@@ -1,24 +1,25 @@
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { setCookie } from 'nookies';
 
 export async function POST(request: Request) {
   const formData = await request.formData();
+  const name = formData.get('name') as string;
+  const surname = formData.get('surname') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  if (!email || !password) {
+  if (!name || !surname || !email || !password) {
     return NextResponse.json({ success: false, message: 'All fields are required' }, { status: 400 });
   }
 
-  const backendLoginUrl = `http://localhost:8080/api/v1/auth/login`
+  const backendRegisterUrl = `http://localhost:8080/api/v1/auth/register`;
 
-  const response = await fetch(backendLoginUrl, {
+  const response = await fetch(backendRegisterUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ name, surname, email, password }),
   });
 
   const data = await response.json();
@@ -31,8 +32,8 @@ export async function POST(request: Request) {
       maxAge: 30 * 24 * 60 * 60,
       path: '/',
     });
-    return res;
+    return NextResponse.json({ success: true, message: 'Registration successful' });
   } else {
-    return NextResponse.json({ success: false, message: data.message || 'Login failed'}, { status: response.status });
+    return NextResponse.json({ success: false, message: data.message || 'Registration failed' }, { status: response.status });
   }
 }
