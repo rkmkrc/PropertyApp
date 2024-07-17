@@ -20,6 +20,8 @@ type Listing = {
   area: number;
   publishedDate: string;
   isTemplate?: boolean;
+  onAdd?: (listing: Listing) => void;
+  onDelete?: (id: number) => void;
 };
 
 const formatPrice = (price: number) => {
@@ -36,6 +38,8 @@ const ListingCard: React.FC<Listing> = ({
   area,
   publishedDate,
   isTemplate = false,
+  onAdd,
+  onDelete,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -51,19 +55,22 @@ const ListingCard: React.FC<Listing> = ({
 
       const result = await response.json();
       if (result.success) {
-        // Refresh the page or update state to reflect the deletion
         showToast(result.message, "success");
-        console.log("Listing deleted successfully");
+        onDelete && onDelete(id);
       } else {
         showToast(result.message, "error");
-        console.error("Failed to delete listing");
       }
     } catch (error) {
-      console.error("An error occurred during deletion", error);
+      showToast("An error occurred during deletion", "error");
     }
   };
 
   if (isTemplate) {
+    const handleAddListing = async (newListing: Listing) => {
+      onAdd && onAdd(newListing);
+      handleModalClose();
+    };
+
     return (
       <div
         className={`${styles.card} ${styles.templateCard}`}
@@ -71,7 +78,7 @@ const ListingCard: React.FC<Listing> = ({
       >
         <div className={styles.plusIcon}>+</div>
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <AddListingForm onClose={handleModalClose} />
+          <AddListingForm onClose={handleModalClose} onAdd={handleAddListing} />
         </Modal>
       </div>
     );
@@ -101,7 +108,7 @@ const ListingCard: React.FC<Listing> = ({
       <div className={styles.details}>
         <h2 className={styles.title}>{title}</h2>
         <p className={styles.info}>
-          <span>Type: {type}</span> | <span>Area: {area} sq ft</span>
+          <span>Type: {type}</span> | <span>Area: {area} sq mt</span>
         </p>
         <p className={styles.price}>
           <span>Price: {formattedPrice} TL</span>
