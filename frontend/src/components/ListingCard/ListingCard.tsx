@@ -98,7 +98,7 @@ const ListingCard: React.FC<Listing> = ({
       )}
       <div className={styles.imageWrapper}>
         <Image
-          src="/land.jpg"
+          src={`/${type}.png`}
           alt={`${title} image`}
           width={300}
           height={200}

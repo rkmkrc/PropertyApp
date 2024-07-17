@@ -39,6 +39,7 @@ const AddListingForm: React.FC<AddListingFormProps> = ({ onClose, onAdd }) => {
     try {
       const response = await fetch("/api/listings", {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
@@ -51,7 +52,7 @@ const AddListingForm: React.FC<AddListingFormProps> = ({ onClose, onAdd }) => {
         onAdd(result.data); // Pass the new listing data back
         onClose(); // Close the modal after adding
       } else {
-        showToast("Failed to create listing", "error");
+        showToast(result.message, "error");
       }
     } catch (error) {
       showToast("An error occurred during listing creation", "error");
