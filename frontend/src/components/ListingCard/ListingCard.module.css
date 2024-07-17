@@ -71,11 +71,17 @@
   margin-top: 10px;
 }
 
+.statusWrapper {
+  display: flex;
+  align-items: center;
+}
+
 .statusIndicator {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background-color: gray;
+  margin-right: 5px;
 }
 
 .statusIndicator.active {
@@ -84,6 +90,11 @@
 
 .statusIndicator.inactive {
   background-color: rgba(128, 128, 128, 0.505);
+}
+
+.statusText {
+  font-size: 14px;
+  color: #666;
 }
 
 .date {

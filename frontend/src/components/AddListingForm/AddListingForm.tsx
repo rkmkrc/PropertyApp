@@ -3,13 +3,14 @@
 
 import React from "react";
 import { showToast } from "@/lib/toast";
+import "react-toastify/dist/ReactToastify.css";
 import styles from "./AddListingForm.module.css";
 
 type AddListingFormProps = {
-  onSubmit: () => void;
+  onClose: () => void;
 };
 
-const AddListingForm: React.FC<AddListingFormProps> = ({ onSubmit }) => {
+const AddListingForm: React.FC<AddListingFormProps> = ({ onClose }) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -34,10 +35,10 @@ const AddListingForm: React.FC<AddListingFormProps> = ({ onSubmit }) => {
 
       const result = await response.json();
       if (result.success) {
-        showToast("Listing created successfully!", "success");
-        onSubmit();
+        showToast(result.message, "success");
+        onClose(); // Close the modal after successful submission
       } else {
-        showToast("Failed to create listing", "error");
+        showToast(result.message, "error");
       }
     } catch (error) {
       showToast("An error occurred during listing creation", "error");

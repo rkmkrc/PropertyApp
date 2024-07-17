@@ -24,7 +24,7 @@ const formatPrice = (price: number) => {
 };
 
 const ListingCard: React.FC<Listing> = ({
-  title = "s",
+  title,
   description,
   type,
   price,
@@ -37,12 +37,6 @@ const ListingCard: React.FC<Listing> = ({
 
   const handleModalOpen = () => setIsModalOpen(true);
   const handleModalClose = () => setIsModalOpen(false);
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Handle form submission
-    console.log("Form submitted");
-    handleModalClose();
-  };
 
   if (isTemplate) {
     return (
@@ -52,7 +46,7 @@ const ListingCard: React.FC<Listing> = ({
       >
         <div className={styles.plusIcon}>+</div>
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-          <AddListingForm onSubmit={handleSubmit} />
+          <AddListingForm onClose={handleModalClose} />
         </Modal>
       </div>
     );
@@ -79,7 +73,7 @@ const ListingCard: React.FC<Listing> = ({
           <span>Price: {formattedPrice} TL</span>
         </p>
         <div className={styles.footer}>
-          <span>
+          <div className={styles.statusWrapper}>
             <div
               className={`${styles.statusIndicator} ${
                 status.toLowerCase() === "active"
@@ -87,8 +81,8 @@ const ListingCard: React.FC<Listing> = ({
                   : styles.inactive
               }`}
             />
-          </span>
-          <span>{status}</span>
+            <span className={styles.statusText}>{status}</span>
+          </div>
           <p className={styles.date}>
             Published on: {new Date(publishedDate).toLocaleDateString()}
           </p>
