@@ -62,6 +62,7 @@ const DashboardPage = async () => {
     const packagesData = await packagesResponse.json();
     packages = packagesData.data;
   }
+  console.log(listings);
 
   return (
     <div className={styles.dashboardContainer}>
@@ -72,6 +73,18 @@ const DashboardPage = async () => {
           {listings.map((listing: any) => (
             <ListingCard key={listing.id} {...listing} />
           ))}
+          <ListingCard
+            isTemplate={true}
+            id={0}
+            title={""}
+            description={""}
+            type={""}
+            price={0}
+            status={""}
+            area={0}
+            publishedDate={""}
+          />{" "}
+          {/* Template card for creating new listings */}
         </div>
       ) : (
         <p>Listings not found</p>
