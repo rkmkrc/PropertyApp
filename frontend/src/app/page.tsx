@@ -1,16 +1,33 @@
-import Image from "next/image";
 import styles from "./page.module.css";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "next/navigation"; // Ensure you import from "next/navigation" in App Router
+import ListingCard from "@/components/ListingCard/ListingCard";
 
-export default function Home() {
-  return (
-    <>
-      <ToastContainer />
-      <div>
-        <h1>Home</h1>
-      </div>
-    </>
+const HomePage: React.FC = async () => {
+  const listingResponse = await fetch(
+    `http://localhost:8080/api/v1/listings/active`,
+    {
+      cache: "no-store",
+      method: "GET",
+    }
   );
-}
+
+  const listingData = await listingResponse.json();
+
+  if (!listingData.success) {
+    return <div>Failed to load listing data: {listingData.message}</div>;
+  }
+
+  const listings = listingData.data;
+
+  return (
+    <div className={styles.homeContainer}>
+      <h2>All Listings</h2>
+      <div className={styles.gridContainer}>
+        {listings.map((listing: any) => (
+          <ListingCard key={listing.id} {...listing} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default HomePage;

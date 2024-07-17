@@ -7,9 +7,11 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./login.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; // Ensure you import from "next/navigation" in App Router
+import { useAuth } from "@/context/AuthContext";
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,6 +27,7 @@ const LoginPage: React.FC = () => {
       const resData = await response.json();
 
       if (resData.success) {
+        login();
         router.push("/dashboard");
       } else {
         showToast(resData.message, "error");

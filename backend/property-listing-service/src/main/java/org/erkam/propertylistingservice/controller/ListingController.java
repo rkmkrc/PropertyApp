@@ -71,6 +71,29 @@ public class ListingController {
     }
 
     @Operation(
+            description = "Get endpoint to fetch all active listings.",
+            summary = "Get all active listings.",
+            responses = {
+                    @ApiResponse(
+                            description = "Success.",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized.",
+                            responseCode = "403"
+                    ),
+                    @ApiResponse(
+                            description = "Not found.",
+                            responseCode = "404"
+                    )
+            }
+    )
+    @GetMapping("/active")
+    public ResponseEntity<GenericResponse<List<ListingGetResponse>>> getAllActive() {
+        return new ResponseEntity<>(listingService.getAllActive(), HttpStatus.OK);
+    }
+
+    @Operation(
             description = "Get endpoint to fetch a listing by id.",
             summary = "Get a listing.",
             responses = {

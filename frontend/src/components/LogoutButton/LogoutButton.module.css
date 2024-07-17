@@ -1,0 +1,14 @@
+.navLink {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  border: 2px solid #fff; /* Add border */
+  padding: 5px 10px; /* Add padding for spacing */
+  border-radius: 4px; /* Optional: Add border radius */
+  transition: background-color 0.3s ease; /* Optional: Add transition for hover effect */
+}
+
+.navLink:hover {
+  background-color: rgba(140, 124, 124, 0.59); /* Optional: Add background color on hover */
+}

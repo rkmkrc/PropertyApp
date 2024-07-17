@@ -176,4 +176,14 @@ public class ListingService {
 
         return GenericResponse.success(ListingUpdateResponse.of(listing));
     }
+
+    public GenericResponse<List<ListingGetResponse>> getAllActive() {
+        List<Listing> listings = listingRepository.findByStatus(ListingStatus.ACTIVE);
+        if (listings.isEmpty()) {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.NO_DATA_ON_DATABASE));
+            throw new ListingException.NoDataOnDatabaseException(ListingExceptionMessage.NO_DATA_ON_DATABASE);
+        }
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.ALL_ACTIVE_LISTINGS_FETCHED));
+        return GenericResponse.success(ListingConverter.toListingGetResponseList(listings));
+    }
 }

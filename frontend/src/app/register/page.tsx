@@ -7,10 +7,11 @@ import "react-toastify/dist/ReactToastify.css";
 import styles from "./register.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
-
+  const { login } = useAuth();
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -26,6 +27,7 @@ const RegisterPage: React.FC = () => {
 
       if (resData.success) {
         showToast(resData.message, "success");
+        login();
         router.push("/dashboard");
       } else {
         showToast(resData.message, "error");
