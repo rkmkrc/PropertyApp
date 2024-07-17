@@ -102,6 +102,31 @@
   color: #999;
 }
 
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.editButton,
+.deleteButton {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.editButton {
+  background-color: #4caf50;
+  color: white;
+}
+
+.deleteButton {
+  background-color: #f44336;
+  color: white;
+}
+
 .card:hover {
   background-color: #f0f0f0; /* Change background color on hover */
 }
@@ -124,4 +149,41 @@
 
 .plusIcon:hover {
   color: #333;
+}
+
+.deleteButton {
+  background-color: #F44336;
+  color: white;
+}
+
+.editButton:hover {
+  background-color: #45a049;
+}
+
+.deleteButton:hover {
+  background-color: #e53935;
+}
+
+.deleteButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-25%, -25%);
+  display: flex;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  background-color: #333;
+  border-radius: 20px;
+  border: 1px solid #fff;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.deleteButton:hover {
+  background-color: red;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
 }

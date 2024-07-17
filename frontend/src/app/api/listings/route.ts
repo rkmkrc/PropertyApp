@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   const data = await response.json();
 
   if (response.ok) {
-    return NextResponse.json({ success: true, message: 'Listing creation successful', data: data });
+    return NextResponse.json({ success: true, message: 'Listing created successfully', data: data });
   } else {
     return NextResponse.json(
       { success: false, message: data.message || 'Listing creation failed' },
@@ -53,3 +53,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
+

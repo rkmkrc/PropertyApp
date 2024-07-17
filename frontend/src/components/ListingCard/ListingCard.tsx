@@ -1,4 +1,5 @@
 "use client";
+
 // components/ListingCard/ListingCard.tsx
 
 import React, { useState } from "react";
@@ -6,6 +7,8 @@ import Image from "next/image";
 import styles from "./ListingCard.module.css";
 import Modal from "@/components/Modal/Modal";
 import AddListingForm from "@/components/AddListingForm/AddListingForm";
+import { FaTrashAlt } from "react-icons/fa";
+import { showToast } from "@/lib/toast";
 
 type Listing = {
   id: number;
@@ -24,6 +27,7 @@ const formatPrice = (price: number) => {
 };
 
 const ListingCard: React.FC<Listing> = ({
+  id,
   title,
   description,
   type,
@@ -34,9 +38,30 @@ const ListingCard: React.FC<Listing> = ({
   isTemplate = false,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const handleModalOpen = () => setIsModalOpen(true);
   const handleModalClose = () => setIsModalOpen(false);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/listings/${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Refresh the page or update state to reflect the deletion
+        showToast(result.message, "success");
+        console.log("Listing deleted successfully");
+      } else {
+        showToast(result.message, "error");
+        console.error("Failed to delete listing");
+      }
+    } catch (error) {
+      console.error("An error occurred during deletion", error);
+    }
+  };
 
   if (isTemplate) {
     return (
@@ -54,7 +79,16 @@ const ListingCard: React.FC<Listing> = ({
 
   const formattedPrice = formatPrice(price);
   return (
-    <div className={styles.card}>
+    <div
+      className={styles.card}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      {isHovering && !isTemplate && (
+        <div className={styles.deleteButton} onClick={handleDelete}>
+          <FaTrashAlt />
+        </div>
+      )}
       <div className={styles.imageWrapper}>
         <Image
           src="/land.jpg"
