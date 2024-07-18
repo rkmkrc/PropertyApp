@@ -1,9 +1,10 @@
+// src/app/dashboard/page.tsx
+
 import UserProfile from "@/components/UserProfile/UserProfile";
-import { redirect } from "next/navigation";
 import styles from "./DashboardPage.module.css";
-import ListingCard from "@/components/ListingCard/ListingCard";
-import PackageCard from "@/components/PackageCard/PackageCard";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import DashboardContent from "@/components/DashboardContent/DashboardContent";
 
 const DashboardPage = async () => {
   const cookieStore = cookies();
@@ -62,43 +63,11 @@ const DashboardPage = async () => {
     const packagesData = await packagesResponse.json();
     packages = packagesData.data;
   }
-  console.log(listings);
 
   return (
     <div className={styles.dashboardContainer}>
       {user ? <UserProfile {...user} /> : <p>User not found</p>}
-      <h2>Portfolio</h2>
-      {listings ? (
-        <div className={styles.gridContainer}>
-          {listings.map((listing: any) => (
-            <ListingCard key={listing.id} {...listing} />
-          ))}
-          <ListingCard
-            isTemplate={true}
-            id={0}
-            title={""}
-            description={""}
-            type={""}
-            price={0}
-            status={""}
-            area={0}
-            publishedDate={""}
-          />{" "}
-          {/* Template card for creating new listings */}
-        </div>
-      ) : (
-        <p>Listings not found</p>
-      )}
-      <h2>Packages</h2>
-      {packages ? (
-        <div className={styles.packageGridContainer}>
-          {packages.map((pkg: any) => (
-            <PackageCard key={pkg.title} {...pkg} />
-          ))}
-        </div>
-      ) : (
-        <p>Packages not found</p>
-      )}
+      <DashboardContent listings={listings} packages={packages} />
     </div>
   );
 };

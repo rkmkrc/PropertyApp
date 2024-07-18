@@ -1,5 +1,3 @@
-/* src/app/dashboard/DashboardPage.module.css */
-
 .dashboardContainer {
   padding: 20px;
 }
@@ -17,4 +15,23 @@
   margin: 10px;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 10px;
+}
+
+.filterContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filterContainer button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.filterContainer button:hover {
+  background-color: #0056b3;
 }
