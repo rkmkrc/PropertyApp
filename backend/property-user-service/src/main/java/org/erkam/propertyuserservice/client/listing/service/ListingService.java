@@ -94,9 +94,9 @@ public class ListingService {
         return response.getBody().getData();
     }
 
-    public ListingUpdateResponse updateTheListing(ListingUpdateRequest request) {
+    public ListingUpdateResponse updateTheListing(Long id, ListingUpdateRequest request) {
 
-        ResponseEntity<GenericResponse<ListingUpdateResponse>> response = listingClient.updateTheListing(request);
+        ResponseEntity<GenericResponse<ListingUpdateResponse>> response = listingClient.updateTheListing(id, request);
         if (!response.getStatusCode().is2xxSuccessful()) {
             log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.LISTING_COULD_NOT_UPDATED));
             log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));

@@ -43,6 +43,7 @@ public class Listing {
         this.setTitle(request.getTitle());
         this.setDescription(request.getDescription());
         this.setPrice(request.getPrice());
+        this.setStatus(request.getStatus());
         this.setArea(request.getArea());
         this.setType(request.getType());
         return this;

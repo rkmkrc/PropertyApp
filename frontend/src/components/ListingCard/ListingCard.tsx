@@ -22,6 +22,7 @@ type Listing = {
   isTemplate?: boolean;
   onAdd?: (listing: Listing) => void;
   onDelete?: (id: number) => void;
+  onUpdate?: (listing: Listing) => void;
 };
 
 const formatPrice = (price: number) => {
@@ -40,6 +41,7 @@ const ListingCard: React.FC<Listing> = ({
   isTemplate = false,
   onAdd,
   onDelete,
+  onUpdate,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -94,26 +96,9 @@ const ListingCard: React.FC<Listing> = ({
     setIsModalOpen(true);
   };
 
-  const handleUpdate = async (updatedListing: Listing) => {
-    try {
-      const response = await fetch(`/api/listings/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedListing),
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        showToast("Listing updated successfully!", "success");
-        handleModalClose();
-      } else {
-        showToast(result.message, "error");
-      }
-    } catch (error) {
-      showToast("An error occurred during listing update", "error");
-    }
+  const handleUpdate = (updatedListing: Listing) => {
+    onUpdate && onUpdate(updatedListing);
+    handleModalClose();
   };
 
   const formattedPrice = formatPrice(price);

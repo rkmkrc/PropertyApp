@@ -9,8 +9,8 @@ import styles from "./AddListingForm.module.css";
 
 type AddListingFormProps = {
   onClose: () => void;
-  onAdd: (listing: Listing) => void;
-  listing?: Listing;
+  onAdd: (listing: any) => void;
+  listing?: any;
 };
 
 const AddListingForm: React.FC<AddListingFormProps> = ({
@@ -21,7 +21,6 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
   const [selectedType, setSelectedType] = useState(listing?.type || "");
   const [selectedStatus, setSelectedStatus] = useState(listing?.status || "");
   const [typeError, setTypeError] = useState(false);
-  const [statusError, setStatusError] = useState(false);
   const [formData, setFormData] = useState({
     title: listing?.title || "",
     description: listing?.description || "",
@@ -45,15 +44,9 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!selectedType) {
+    if (!selectedType || !selectedStatus) {
       setTypeError(true);
-      showToast("Please select a type", "error");
-      return;
-    }
-
-    if (listing && !selectedStatus) {
-      setStatusError(true);
-      showToast("Please select a status", "error");
+      showToast("Please select a type and status", "error");
       return;
     }
 
@@ -101,7 +94,7 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
 
   const handleStatusSelection = (status: string) => {
     setSelectedStatus(status);
-    setStatusError(false);
+    setTypeError(false);
   };
 
   const handleChange = (
@@ -155,24 +148,22 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
           ))}
         </div>
       </div>
-      {listing && (
-        <div className={styles.field}>
-          <label className={styles.label}>Status</label>
-          <div className={styles.typeSelector}>
-            {["ACTIVE", "PASSIVE"].map((status) => (
-              <div
-                key={status}
-                className={`${styles.typeOption} ${
-                  selectedStatus === status ? styles.selected : ""
-                }`}
-                onClick={() => handleStatusSelection(status)}
-              >
-                {status}
-              </div>
-            ))}
-          </div>
+      <div className={styles.field}>
+        <label className={styles.label}>Status</label>
+        <div className={styles.typeSelector}>
+          {["ACTIVE", "PASSIVE"].map((status) => (
+            <div
+              key={status}
+              className={`${styles.typeOption} ${
+                selectedStatus === status ? styles.selected : ""
+              }`}
+              onClick={() => handleStatusSelection(status)}
+            >
+              {status}
+            </div>
+          ))}
         </div>
-      )}
+      </div>
       <div className={styles.field}>
         <label className={styles.label}>Price</label>
         <input

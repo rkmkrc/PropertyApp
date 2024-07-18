@@ -163,16 +163,16 @@ public class ListingService {
     // Update the status of a listing if it belongs to the currently authenticated user
     // if there are no data on database then throw an exception,
     // else create a ListingUpdateResponse then return it.
-    public GenericResponse<ListingUpdateResponse> updateListing(ListingUpdateRequest request, HttpServletRequest httpRequest) {
+    public GenericResponse<ListingUpdateResponse> updateListing(Long id, ListingUpdateRequest request, HttpServletRequest httpRequest) {
         Long userId = (Long) httpRequest.getAttribute("userId");
 
-        Listing listing = listingRepository.findByIdAndUserId(request.getId(), userId).orElseThrow(() -> {
-            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, request.getId()));
-            return new ListingException.ListingNotFoundOrYouDontHavePermissionException(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, request.getId());
+        Listing listing = listingRepository.findByIdAndUserId(id, userId).orElseThrow(() -> {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id));
+            return new ListingException.ListingNotFoundOrYouDontHavePermissionException(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id);
         });
 
         listingRepository.save(listing.updateByRequest(request));
-        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_UPDATED, request.getId()));
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_UPDATED, id));
 
         return GenericResponse.success(ListingUpdateResponse.of(listing));
     }
