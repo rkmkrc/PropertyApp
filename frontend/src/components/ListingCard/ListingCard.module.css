@@ -16,7 +16,6 @@
   width: 280px; /* Fixed width */
   height: 350px; /* Fixed height */
   margin: 10px; /* Optional: Add some margin */
-  transition: color 0.3s ease;
 }
 
 .imageWrapper {
@@ -109,25 +108,6 @@
   margin-top: 10px;
 }
 
-.editButton,
-.deleteButton {
-  padding: 5px 10px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.editButton {
-  background-color: #4caf50;
-  color: white;
-}
-
-.deleteButton {
-  background-color: #f44336;
-  color: white;
-}
-
 .card:hover {
   background-color: #f0f0f0; /* Change background color on hover */
 }
@@ -153,29 +133,16 @@
 }
 
 .deleteButton {
-  background-color: #F44336;
-  color: white;
-}
-
-.editButton:hover {
-  background-color: #45a049;
-}
-
-.deleteButton:hover {
-  background-color: #e53935;
-}
-
-.deleteButton {
   position: absolute;
   top: 0;
   left: 0;
   transform: translate(-25%, -25%);
   display: flex;
   z-index: 2;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   background-color: #333;
-  border-radius: 20px;
+  border-radius: 100%;
   border: 1px solid #fff;
   color: white;
   justify-content: center;
@@ -185,6 +152,30 @@
 
 .deleteButton:hover {
   background-color: red;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.editButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+  display: flex;
+  z-index: 2;
+  width: 50px;
+  height: 50px;
+  background-color: #333;
+  border-radius: 100%;
+  border: 1px solid #fff;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.editButton:hover {
+  background-color: orange;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }

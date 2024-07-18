@@ -7,7 +7,7 @@ import Image from "next/image";
 import styles from "./ListingCard.module.css";
 import Modal from "@/components/Modal/Modal";
 import AddListingForm from "@/components/AddListingForm/AddListingForm";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import { showToast } from "@/lib/toast";
 
 type Listing = {
@@ -44,8 +44,14 @@ const ListingCard: React.FC<Listing> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleModalOpen = () => setIsModalOpen(true);
-  const handleModalClose = () => setIsModalOpen(false);
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+    setIsHovering(false); // Reset hover state when modal is opened
+  };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setIsHovering(false); // Reset hover state when modal is closed
+  };
 
   const handleDelete = async () => {
     try {
@@ -84,6 +90,32 @@ const ListingCard: React.FC<Listing> = ({
     );
   }
 
+  const handleEdit = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleUpdate = async (updatedListing: Listing) => {
+    try {
+      const response = await fetch(`/api/listings/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedListing),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        showToast("Listing updated successfully!", "success");
+        handleModalClose();
+      } else {
+        showToast(result.message, "error");
+      }
+    } catch (error) {
+      showToast("An error occurred during listing update", "error");
+    }
+  };
+
   const formattedPrice = formatPrice(price);
   return (
     <div
@@ -92,9 +124,14 @@ const ListingCard: React.FC<Listing> = ({
       onMouseLeave={() => setIsHovering(false)}
     >
       {isHovering && !isTemplate && (
-        <div className={styles.deleteButton} onClick={handleDelete}>
-          <FaTrashAlt />
-        </div>
+        <>
+          <div className={styles.deleteButton} onClick={handleDelete}>
+            <FaTrashAlt />
+          </div>
+          <div className={styles.editButton} onClick={handleEdit}>
+            <FaPencilAlt />
+          </div>
+        </>
       )}
       <div className={styles.imageWrapper}>
         <Image
@@ -129,6 +166,22 @@ const ListingCard: React.FC<Listing> = ({
           </p>
         </div>
       </div>
+      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+        <AddListingForm
+          onClose={handleModalClose}
+          onAdd={handleUpdate}
+          listing={{
+            id,
+            title,
+            description,
+            type,
+            status,
+            price,
+            area,
+            publishedDate,
+          }}
+        />
+      </Modal>
     </div>
   );
 };

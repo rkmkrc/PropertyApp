@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const { title, description, type, price, area } = await req.json();
 
   // Validate required fields
-  if (!title || !description || !type || !price || !area) {
+  if (!title || !description || !type) {
     return NextResponse.json(
       { success: false, message: 'All fields are required' },
       { status: 400 }
