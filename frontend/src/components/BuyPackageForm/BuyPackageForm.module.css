@@ -56,6 +56,23 @@
   margin: 5px 0;
 }
 
+.packageDescription, .packageQuota, .packageExpiration {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.price {
+  font-weight: 500;
+  font-style: italic;
+  font-size: 16px;
+  color: #0070f3;
+  margin-top: 5px;
+}
+
+.boldText {
+  font-weight: bold;
+}
+
 .submitButton {
   margin-top: 20px;
   padding: 10px 20px;
@@ -73,20 +90,17 @@
   background-color: #0056b3;
 }
 
-.closeButton {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #dc3545;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 .selected {
   border-color: #0070f3;
   background-color: #e0f7fa;
+}
+
+.icon {
+  color: gold; 
+  font-size: 36px;
+  transition: color 0.3s ease;
+}
+
+.icon:hover {
+  color: darkgoldenrod; /* Change icon color on hover */
 }

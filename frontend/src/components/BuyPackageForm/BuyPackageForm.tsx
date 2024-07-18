@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./BuyPackageForm.module.css";
-import { FaStar, FaRocket, FaGem } from "react-icons/fa";
+import { FaStar, FaRocket, FaGem, FaFireAlt } from "react-icons/fa";
 
 type BuyPackageFormProps = {
   onClose: () => void;
@@ -12,30 +12,34 @@ const packages = [
   {
     name: "STANDARD",
     icon: <FaStar />,
-    description: "Basic package with standard features.",
+    description: "You will be able to publish 10 listings with this package",
     quota: 10,
     expirationDuration: "30 days",
+    price: 29.99,
   },
   {
-    name: "HYPE_ME",
+    name: "HYPE ME",
     icon: <FaRocket />,
-    description: "Boost your visibility with this package.",
-    quota: 20,
+    description: "You will be able to publish 40 listings with this package",
+    quota: 40,
     expirationDuration: "60 days",
+    price: 99.99,
   },
   {
     name: "PRO",
     icon: <FaGem />,
-    description: "Professional package with premium features.",
-    quota: 50,
+    description: "You will be able to publish 25 listings with this package",
+    quota: 25,
     expirationDuration: "90 days",
+    price: 49.99,
   },
   {
     name: "SHOW ME AT FIRST PAGE",
-    icon: <FaStar />,
-    description: "Get top visibility with this package.",
+    icon: <FaFireAlt />,
+    description: "Your listings will be shown on the first page",
     quota: 100,
-    expirationDuration: "120 days",
+    expirationDuration: "30 days",
+    price: 149.99,
   },
 ];
 
@@ -66,10 +70,14 @@ const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
             <div className={styles.icon}>{pkg.icon}</div>
             <div className={styles.packageName}>{pkg.name}</div>
             <div className={styles.packageDescription}>{pkg.description}</div>
-            <div className={styles.packageQuota}>Quota: {pkg.quota}</div>
-            <div className={styles.packageExpiration}>
-              Expiration: {pkg.expirationDuration}
+            <div className={styles.packageQuota}>
+              <span className={styles.boldText}>Quota:</span> {pkg.quota}
             </div>
+            <div className={styles.packageExpiration}>
+              <span className={styles.boldText}>Expiration:</span>{" "}
+              {pkg.expirationDuration}
+            </div>
+            <div className={styles.price}>${pkg.price}</div>
           </div>
         ))}
       </div>
