@@ -89,7 +89,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
             area={0}
             publishedDate={""}
           />{" "}
-          {/* Template card for creating new listings */}
         </div>
       ) : (
         <p>Listings not found</p>
@@ -100,6 +99,13 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           {packages.map((pkg: any) => (
             <PackageCard key={pkg.title} {...pkg} />
           ))}
+          <PackageCard
+            isTemplate={true}
+            title={"Buy a package"}
+            description={""}
+            type={""}
+            expirationDate={""}
+          />{" "}
         </div>
       ) : (
         <p>Packages not found</p>

@@ -3,10 +3,13 @@
 .card {
   background-color: #fff;
   border-radius: 12px;
+  display: flex;
+  flex-direction: column;
   box-shadow: 2px 5px 6px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin: 10px;
-  max-width: 300px;
+  width: 200px; /* Fixed width */
+  height: 300px; /* Fixed height */
   transition: color 0.3s ease;
 }
 
@@ -42,6 +45,25 @@
   color: #555;
 }
 
+.templateCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 200px; /* Same width as card */
+  height: 300px; /* Same height as card */
+  background-color: #f9f9f9; /* Lighter background for template card */
+  border: 2px dashed #ccc; /* Dashed border for template card */
+}
+
+.plusIcon {
+  font-size: 48px;
+  color: #666;
+}
+
+.plusIcon:hover {
+  color: #333;
+}
 
 .card:hover {
   background-color: #f0f0f0; /* Change background color on hover */

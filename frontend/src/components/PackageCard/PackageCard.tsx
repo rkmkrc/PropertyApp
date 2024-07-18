@@ -1,13 +1,17 @@
 // components/PackageCard/PackageCard.tsx
 
-import React from "react";
+import React, { useState } from "react";
 import styles from "./PackageCard.module.css";
 import { FaStar, FaRocket, FaGem } from "react-icons/fa";
+import Modal from "../Modal/Modal";
+import AddListingForm from "../AddListingForm/AddListingForm";
+import BuyPackageForm from "../BuyPackageForm/BuyPackageForm";
 
-type Package = {
+type Pkg = {
   title: string;
   type: string;
   description: string;
+  isTemplate?: boolean;
   expirationDate: string;
 };
 
@@ -24,12 +28,42 @@ const getIcon = (type: string) => {
   }
 };
 
-const PackageCard: React.FC<Package> = ({
+const PackageCard: React.FC<Pkg> = ({
   title,
   type,
   description,
+  isTemplate = false,
   expirationDate,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  if (isTemplate) {
+    const handleBuyPackage = async (packageName: string) => {
+      console.log("buy package");
+      handleModalClose();
+    };
+
+    return (
+      <div
+        className={`${styles.card} ${styles.templateCard}`}
+        onClick={handleModalOpen}
+      >
+        <div className={styles.plusIcon}>+</div>
+        <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+          <BuyPackageForm onClose={handleModalClose} />
+        </Modal>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.card}>
       <div className={styles.details}>
