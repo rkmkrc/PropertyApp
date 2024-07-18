@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import styles from "./PackageCard.module.css";
-import { FaStar, FaRocket, FaGem } from "react-icons/fa";
+import { FaStar, FaRocket, FaGem, FaFireAlt } from "react-icons/fa";
 import Modal from "../Modal/Modal";
 import AddListingForm from "../AddListingForm/AddListingForm";
 import BuyPackageForm from "../BuyPackageForm/BuyPackageForm";
@@ -23,6 +23,8 @@ const getIcon = (type: string) => {
       return <FaRocket className={styles.icon} />;
     case "PRO":
       return <FaGem className={styles.icon} />;
+    case "SHOW_ME_AT_FIRST_PAGE":
+      return <FaFireAlt className={styles.icon} />;
     default:
       return <FaStar className={styles.icon} />;
   }

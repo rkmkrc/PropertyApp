@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import styles from "./BuyPackageForm.module.css";
 import { FaStar, FaRocket, FaGem, FaFireAlt } from "react-icons/fa";
+import { showToast } from "@/lib/toast";
 
 type BuyPackageFormProps = {
   onClose: () => void;
@@ -11,6 +12,7 @@ type BuyPackageFormProps = {
 const packages = [
   {
     name: "STANDARD",
+    code: "STANDARD",
     icon: <FaStar />,
     description: "You will be able to publish 10 listings with this package",
     quota: 10,
@@ -19,6 +21,7 @@ const packages = [
   },
   {
     name: "HYPE ME",
+    code: "HYPE_ME",
     icon: <FaRocket />,
     description: "You will be able to publish 40 listings with this package",
     quota: 40,
@@ -27,6 +30,7 @@ const packages = [
   },
   {
     name: "PRO",
+    code: "PRO",
     icon: <FaGem />,
     description: "You will be able to publish 25 listings with this package",
     quota: 25,
@@ -35,6 +39,7 @@ const packages = [
   },
   {
     name: "SHOW ME AT FIRST PAGE",
+    code: "SHOW_ME_AT_FIRST_PAGE",
     icon: <FaFireAlt />,
     description: "Your listings will be shown on the first page",
     quota: 100,
@@ -50,9 +55,28 @@ const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
     setSelectedPackage(pkg);
   };
 
-  const handleSubmit = (e: React.MouseEvent) => {
+  const handlePurchase = async (e: React.MouseEvent) => {
     e.preventDefault();
-    // buy
+    console.log("BIY");
+    try {
+      const response = await fetch(`/api/users/packages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type: selectedPackage.code }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        showToast(`Package purchased successfully!`, "success");
+        onClose(); // Close the modal after adding
+      } else {
+        showToast(result.message, "error");
+      }
+    } catch (error) {
+      showToast(`An error occurred: ${error}`, "error");
+    }
   };
 
   return (
@@ -83,7 +107,7 @@ const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
       </div>
       <button
         type="button"
-        onClick={handleSubmit}
+        onClick={handlePurchase}
         className={styles.submitButton}
       >
         Purchase
