@@ -1,9 +1,8 @@
 "use client";
 
-// components/ListingCard/ListingCard.tsx
-
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import styles from "./ListingCard.module.css";
 import Modal from "@/components/Modal/Modal";
 import AddListingForm from "@/components/AddListingForm/AddListingForm";
@@ -45,6 +44,7 @@ const ListingCard: React.FC<Listing> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const router = useRouter();
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -55,7 +55,8 @@ const ListingCard: React.FC<Listing> = ({
     setIsHovering(false); // Reset hover state when modal is closed
   };
 
-  const handleDelete = async () => {
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.stopPropagation();
     try {
       const response = await fetch(`/api/listings/${id}`, {
         method: "DELETE",
@@ -72,6 +73,22 @@ const ListingCard: React.FC<Listing> = ({
       showToast("An error occurred during deletion", "error");
     }
   };
+
+  const handleEdit = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsModalOpen(true);
+  };
+
+  const handleUpdate = (updatedListing: Listing) => {
+    onUpdate && onUpdate(updatedListing);
+    handleModalClose();
+  };
+
+  const handleCardClick = () => {
+    router.push(`/listings/${id}`);
+  };
+
+  const formattedPrice = formatPrice(price);
 
   if (isTemplate) {
     const handleAddListing = async (newListing: Listing) => {
@@ -92,21 +109,12 @@ const ListingCard: React.FC<Listing> = ({
     );
   }
 
-  const handleEdit = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleUpdate = (updatedListing: Listing) => {
-    onUpdate && onUpdate(updatedListing);
-    handleModalClose();
-  };
-
-  const formattedPrice = formatPrice(price);
   return (
     <div
       className={styles.card}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      onClick={handleCardClick}
     >
       {isHovering && !isTemplate && (
         <>

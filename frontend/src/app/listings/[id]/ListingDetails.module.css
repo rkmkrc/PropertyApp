@@ -1,0 +1,20 @@
+.listingDetailsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 20px;
+}
+
+.detailsContent {
+  text-align: center;
+}
+
+.detailsContent h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.detailsContent p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}

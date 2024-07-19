@@ -53,9 +53,6 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 
   const listingData = await req.json();
-  console.log("==========")
-  console.log(listingData)
-  console.log("==========")
   const { title, description, type, price, area, status } = listingData;
 
   // Validate required fields
@@ -106,4 +103,3 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     );
   }
 }
-

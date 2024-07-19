@@ -16,6 +16,7 @@
   width: 280px; /* Fixed width */
   height: 350px; /* Fixed height */
   margin: 10px; /* Optional: Add some margin */
+  cursor: pointer;
 }
 
 .imageWrapper {
