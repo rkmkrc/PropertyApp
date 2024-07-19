@@ -1,0 +1,14 @@
+
+.packagesPageContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.gridContainer {
+  margin: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  align-items: start;
+}

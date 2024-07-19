@@ -1,27 +1,22 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import styles from "./DashboardContent.module.css";
 import ListingCard from "@/components/ListingCard/ListingCard";
-import PackageCard from "@/components/PackageCard/PackageCard";
 import FilterSection from "@/components/FilterSection/FilterSection";
-import { HiOutlineExternalLink } from "react-icons/hi";
+import styles from "./portfolio.module.css";
 
-type DashboardContentProps = {
+type PortfolioPageClientProps = {
   listings: any[];
-  packages: any[];
 };
 
-const DashboardContent: React.FC<DashboardContentProps> = ({
+const PortfolioPageClient: React.FC<PortfolioPageClientProps> = ({
   listings,
-  packages,
 }) => {
   const [filter, setFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [priceFilter, setPriceFilter] = useState("ALL");
   const [dateFilter, setDateFilter] = useState("ALL");
-  const [filteredListings, setFilteredListings] = useState(listings);
+  const [filteredListings, setFilteredListings] = useState<any[]>(listings);
 
   useEffect(() => {
     let updatedListings = listings;
@@ -66,12 +61,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   }, [filter, typeFilter, priceFilter, dateFilter, listings]);
 
   return (
-    <div className={styles.dashboardContentContainer}>
-      <h2>
-        <Link href="/portfolio" className={styles.clickableHeader}>
-          Portfolio <HiOutlineExternalLink className={styles.linkIcon} />
-        </Link>
-      </h2>
+    <div className={styles.portfolioPageContainer}>
+      <h1>My Portfolio</h1>
       <FilterSection
         handleTypeFilterChange={setTypeFilter}
         handlePriceFilterChange={setPriceFilter}
@@ -99,29 +90,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       ) : (
         <p>Listings not found</p>
       )}
-      <h2>
-        <Link href="/packages" className={styles.clickableHeader}>
-          Packages <HiOutlineExternalLink className={styles.linkIcon} />
-        </Link>
-      </h2>
-      {packages.length > 0 ? (
-        <div className={styles.packageGridContainer}>
-          {packages.map((pkg: any) => (
-            <PackageCard key={pkg.title} {...pkg} />
-          ))}
-          <PackageCard
-            isTemplate={true}
-            title={"Buy a package"}
-            description={""}
-            type={""}
-            expirationDate={""}
-          />
-        </div>
-      ) : (
-        <p>Packages not found</p>
-      )}
     </div>
   );
 };
 
-export default DashboardContent;
+export default PortfolioPageClient;

@@ -19,3 +19,25 @@
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 10px;
 }
+
+.clickableHeader {
+  color: #000; /* Set the normal color */
+  text-decoration: none; /* Remove underline */
+  font-size: 32px;
+  display: inline-flex; /* Ensure the clickable area is just the text */
+  align-items: center;
+}
+
+.clickableHeader:hover {
+  color: #0000008f; 
+}
+
+.linkIcon {
+  color: #000; /* Set the normal color */
+  margin-left: 5px;
+  font-size: 28px;
+}
+
+.linkIcon:hover {
+  color: #0000008f; 
+}

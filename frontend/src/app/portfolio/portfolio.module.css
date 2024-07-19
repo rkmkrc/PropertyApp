@@ -1,0 +1,15 @@
+/* src/app/portfolio/portfolio.module.css */
+
+.portfolioPageContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.gridContainer {
+  margin: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
