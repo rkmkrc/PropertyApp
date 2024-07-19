@@ -1,20 +1,74 @@
+/* ListingDetails.module.css */
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
 .listingDetailsContainer {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5%;
+  max-width: 80%;
+  margin: auto;
   padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+}
+
+.carouselContainer {
+  width: 60%;
 }
 
 .detailsContent {
-  text-align: center;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  width: 35%;
+  border: 1px solid #ccc; 
 }
 
-.detailsContent h1 {
-  font-size: 24px;
-  margin-bottom: 20px;
+.detailsContent:hover {
+  background: #f9f9f910;
+  transition: background-color 0.3s ease;
 }
 
 .detailsContent p {
   font-size: 18px;
   margin-bottom: 10px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc; 
+  padding: 8px;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.details {
+  text-align: center;
+  font-weight: bold;
+  font-size: 26px;
+}
+
+.label {
+  font-weight: 600;
+  font-size: 18px;
+  color: #333;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 400;
+  color: #555;
+  margin-left: 15px;
 }

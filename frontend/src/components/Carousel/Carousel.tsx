@@ -20,7 +20,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, title }) => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: true,
+    arrows: false,
     asNavFor: nav2 as Slider,
     ref: (slider1: Slider) => setNav1(slider1),
   };
