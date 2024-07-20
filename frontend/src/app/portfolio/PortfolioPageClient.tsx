@@ -60,6 +60,7 @@ const PortfolioPageClient: React.FC<PortfolioPageClientProps> = ({
     }
 
     setFilteredListings(updatedListings);
+    setCurrentPage(1); // Reset to the first page when filters change
   }, [filter, typeFilter, priceFilter, dateFilter, listings]);
 
   const paginatedListings = filteredListings.slice(
@@ -82,10 +83,22 @@ const PortfolioPageClient: React.FC<PortfolioPageClientProps> = ({
     <div className={styles.portfolioPageContainer}>
       <h1>My Portfolio</h1>
       <FilterSection
-        handleTypeFilterChange={setTypeFilter}
-        handlePriceFilterChange={setPriceFilter}
-        handleDateFilterChange={setDateFilter}
-        handleStatusFilterChange={setFilter}
+        handleTypeFilterChange={(type) => {
+          setTypeFilter(type);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
+        handlePriceFilterChange={(price) => {
+          setPriceFilter(price);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
+        handleDateFilterChange={(date) => {
+          setDateFilter(date);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
+        handleStatusFilterChange={(status) => {
+          setFilter(status);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
         handleItemsPerPageChange={handleItemsPerPageChange}
         filter={filter}
         itemsPerPage={itemsPerPage}

@@ -21,6 +21,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [priceFilter, setPriceFilter] = useState("ALL");
   const [dateFilter, setDateFilter] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [filteredListings, setFilteredListings] = useState<any[]>(listings);
 
   useEffect(() => {
@@ -65,7 +67,24 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     }
 
     setFilteredListings(updatedListings);
+    setCurrentPage(1); // Reset to the first page when filters change
   }, [filter, typeFilter, priceFilter, dateFilter, listings]);
+
+  const paginatedListings = filteredListings.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleItemsPerPageChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setItemsPerPage(Number(e.target.value));
+    setCurrentPage(1); // Reset to first page when items per page changes
+  };
 
   return (
     <div className={styles.dashboardContentContainer}>
@@ -75,29 +94,63 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         </Link>
       </h2>
       <FilterSection
-        handleTypeFilterChange={setTypeFilter}
-        handlePriceFilterChange={setPriceFilter}
-        handleDateFilterChange={setDateFilter}
-        handleStatusFilterChange={setFilter}
+        handleTypeFilterChange={(type) => {
+          setTypeFilter(type);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
+        handlePriceFilterChange={(price) => {
+          setPriceFilter(price);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
+        handleDateFilterChange={(date) => {
+          setDateFilter(date);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
+        handleStatusFilterChange={(status) => {
+          setFilter(status);
+          setCurrentPage(1); // Reset to the first page when filters change
+        }}
         filter={filter}
+        handleItemsPerPageChange={handleItemsPerPageChange}
+        itemsPerPage={itemsPerPage}
       />
       {filteredListings && filteredListings.length > 0 ? (
-        <div className={styles.gridContainer}>
-          {filteredListings.map((listing: any) => (
-            <ListingCard key={listing.id} {...listing} />
-          ))}
-          <ListingCard
-            isTemplate={true}
-            id={0}
-            title={""}
-            description={""}
-            type={""}
-            price={0}
-            status={""}
-            area={0}
-            publishedDate={""}
-          />
-        </div>
+        <>
+          <div className={styles.gridContainer}>
+            {paginatedListings.map((listing: any) => (
+              <ListingCard key={listing.id} {...listing} />
+            ))}
+            <ListingCard
+              isTemplate={true}
+              id={0}
+              title={""}
+              description={""}
+              type={""}
+              price={0}
+              status={""}
+              area={0}
+              publishedDate={""}
+            />
+          </div>
+          <div className={styles.pagination}>
+            {Array.from(
+              { length: Math.ceil(filteredListings.length / itemsPerPage) },
+              (_, i) => (
+                <button
+                  key={i + 1}
+                  className={
+                    currentPage === i + 1
+                      ? styles.activePageButton
+                      : styles.pageButton
+                  }
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </button>
+              )
+            )}
+          </div>
+        </>
       ) : (
         <p>Listings not found</p>
       )}

@@ -63,7 +63,6 @@ const FilterSection: React.FC<FilterSectionProps> = ({
         <span className={styles.filterText}>
           Listings per page:
           <select
-            id="itemsPerPage"
             className={styles.filterDropdown}
             value={itemsPerPage}
             onChange={handleItemsPerPageChange}

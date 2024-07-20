@@ -41,3 +41,31 @@
 .linkIcon:hover {
   color: #0000008f; 
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pageButton,
+.activePageButton {
+  border: 1px solid #0070f3;
+  background-color: white;
+  color: #0070f3;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.activePageButton {
+  background-color: #0070f3;
+  color: white;
+}
+
+.pageButton:hover {
+  background-color: #0070f3;
+  color: white;
+}
