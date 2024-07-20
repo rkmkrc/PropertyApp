@@ -377,7 +377,7 @@ public class UserController {
             }
     )
     @PutMapping("/listings/{id}")
-    public ResponseEntity<GenericResponse<ListingUpdateResponse>> updateTheListing(@PathVariable Long id, @RequestBody ListingUpdateRequest request) {
+    public ResponseEntity<GenericResponse<ListingGetResponse>> updateTheListing(@PathVariable Long id, @RequestBody ListingUpdateRequest request) {
         return new ResponseEntity<>(userService.updateTheListing(id, request), HttpStatus.OK);
     }
 }

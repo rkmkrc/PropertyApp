@@ -86,6 +86,22 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     setCurrentPage(1); // Reset to first page when items per page changes
   };
 
+  const handleAddListing = (newListing: any) => {
+    setFilteredListings((prev) => [newListing, ...prev]);
+  };
+
+  const handleUpdateListing = (updatedListing: any) => {
+    setFilteredListings((prev) =>
+      prev.map((listing) =>
+        listing.id === updatedListing.id ? updatedListing : listing
+      )
+    );
+  };
+
+  const handleDeleteListing = (id: number) => {
+    setFilteredListings((prev) => prev.filter((listing) => listing.id !== id));
+  };
+
   return (
     <div className={styles.dashboardContentContainer}>
       <h2>
@@ -118,7 +134,13 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         <>
           <div className={styles.gridContainer}>
             {paginatedListings.map((listing: any) => (
-              <ListingCard key={listing.id} {...listing} />
+              <ListingCard
+                key={listing.id}
+                {...listing}
+                onAdd={handleAddListing}
+                onDelete={handleDeleteListing}
+                onUpdate={handleUpdateListing}
+              />
             ))}
             <ListingCard
               isTemplate={true}
@@ -130,6 +152,9 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
               status={""}
               area={0}
               publishedDate={""}
+              onAdd={handleAddListing}
+              onDelete={handleDeleteListing}
+              onUpdate={handleUpdateListing}
             />
           </div>
           <div className={styles.pagination}>

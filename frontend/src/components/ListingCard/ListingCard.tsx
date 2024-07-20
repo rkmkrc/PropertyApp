@@ -24,19 +24,20 @@ type Listing = {
   onUpdate?: (listing: Listing) => void;
 };
 
-const formatPrice = (price: number) => {
+const formatPrice = (price: number | undefined) => {
+  if (price === undefined) return "N/A";
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const ListingCard: React.FC<Listing> = ({
   id,
-  title,
-  description,
-  type,
+  title = "Untitled",
+  description = "No description available",
+  type = "undefined",
   price,
-  status,
+  status = "inactive",
   area,
-  publishedDate,
+  publishedDate = new Date().toISOString(),
   isTemplate = false,
   onAdd,
   onDelete,
@@ -50,6 +51,7 @@ const ListingCard: React.FC<Listing> = ({
     setIsModalOpen(true);
     setIsHovering(false); // Reset hover state when modal is opened
   };
+
   const handleModalClose = () => {
     setIsModalOpen(false);
     setIsHovering(false); // Reset hover state when modal is closed
@@ -138,7 +140,7 @@ const ListingCard: React.FC<Listing> = ({
       <div className={styles.details}>
         <h2 className={styles.title}>{title}</h2>
         <p className={styles.info}>
-          <span>Type: {type}</span> | <span>Area: {area} sq mt</span>
+          <span>Type: {type}</span> | <span>Area: {area ?? "N/A"} sq mt</span>
         </p>
         <p className={styles.price}>
           <span>Price: {formattedPrice} TL</span>
@@ -147,7 +149,7 @@ const ListingCard: React.FC<Listing> = ({
           <div className={styles.statusWrapper}>
             <div
               className={`${styles.statusIndicator} ${
-                status.toLowerCase() === "active"
+                status?.toLowerCase() === "active"
                   ? styles.active
                   : styles.inactive
               }`}
@@ -155,7 +157,10 @@ const ListingCard: React.FC<Listing> = ({
             <span className={styles.statusText}>{status}</span>
           </div>
           <p className={styles.date}>
-            Published on: {new Date(publishedDate).toLocaleDateString()}
+            Published on:{" "}
+            {publishedDate
+              ? new Date(publishedDate).toLocaleDateString()
+              : "Invalid Date"}
           </p>
         </div>
       </div>

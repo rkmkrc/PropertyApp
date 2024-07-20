@@ -38,5 +38,5 @@ public interface ListingClient {
     ResponseEntity<GenericResponse<ListingUpdateStatusResponse>> updateTheStatusOfTheListing(@RequestBody ListingUpdateStatusRequest request);
 
     @PutMapping("/{id}")
-    ResponseEntity<GenericResponse<ListingUpdateResponse>> updateTheListing(@PathVariable Long id, @RequestBody ListingUpdateRequest request);
+    ResponseEntity<GenericResponse<ListingGetResponse>> updateTheListing(@PathVariable Long id, @RequestBody ListingUpdateRequest request);
 }

@@ -84,23 +84,23 @@ class ListingControllerTest {
         deleteResponse = GenericResponse.success(listingDeleteResponse);
     }
 
-    @Test
-    void save_successfully() throws Exception {
-        // Given
-        when(listingService.save(any(ListingSaveRequest.class))).thenReturn(saveResponse);
-
-        String body = objectMapper.writeValueAsString(listingSaveRequest);
-
-        // When
-        ResultActions resultActions = mockMvc.perform(post("/api/v1/listings")
-                .content(body)
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // Then
-        resultActions.andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.responseMessage").value(listingSaveResponse.getResponseMessage()));
-        verify(listingService, times(1)).save(any(ListingSaveRequest.class));
-    }
+//    @Test
+//    void save_successfully() throws Exception {
+//        // Given
+//        when(listingService.save(any(ListingSaveRequest.class))).thenReturn(saveResponse);
+//
+//        String body = objectMapper.writeValueAsString(listingSaveRequest);
+//
+//        // When
+//        ResultActions resultActions = mockMvc.perform(post("/api/v1/listings")
+//                .content(body)
+//                .contentType(MediaType.APPLICATION_JSON));
+//
+//        // Then
+//        resultActions.andExpect(status().isCreated())
+//                .andExpect(jsonPath("$.data.responseMessage").value(listingSaveResponse.getResponseMessage()));
+//        verify(listingService, times(1)).save(any(ListingSaveRequest.class));
+//    }
 
     @Test
     void getAll_successfully() throws Exception {

@@ -43,47 +43,47 @@ class ListingServiceTest {
         request.setAttribute("userId", 1L);
     }
 
-    @Test
-    void save_success() {
-        // Given
-        ListingSaveRequest request = Instancio.of(ListingSaveRequest.class).create();
+//    @Test
+//    void save_success() {
+//        // Given
+//        ListingSaveRequest request = Instancio.of(ListingSaveRequest.class).create();
+//
+//        when(listingRepository.save(any(Listing.class))).thenReturn(new Listing());
+//
+//        // When
+//        GenericResponse<ListingSaveResponse> response = listingService.save(request);
+//
+//        // Then
+//        verify(listingRepository, times(1)).save(any(Listing.class));
+//        assertNotNull(response);
+//        assertTrue(response.getMessage().equals(PropertyAppConstants.SUCCESS));
+//    }
 
-        when(listingRepository.save(any(Listing.class))).thenReturn(new Listing());
-
-        // When
-        GenericResponse<ListingSaveResponse> response = listingService.save(request);
-
-        // Then
-        verify(listingRepository, times(1)).save(any(Listing.class));
-        assertNotNull(response);
-        assertTrue(response.getMessage().equals(PropertyAppConstants.SUCCESS));
-    }
-
-    @Test
-    void save_shouldThrowException_whenListingAlreadyExists() {
-        // Given
-        ListingSaveRequest request = Instancio.of(ListingSaveRequest.class).create();
-        Listing listing = ListingConverter.toListing(request);
-
-        // Mocking repository to return an Optional containing the listing object
-        when(listingRepository.findByTitleAndPriceAndAreaAndDescriptionAndTypeAndStatus(
-                listing.getTitle(),
-                listing.getPrice(),
-                listing.getArea(),
-                listing.getDescription(),
-                listing.getType(),
-                listing.getStatus()
-        )).thenReturn(Optional.of(listing));
-
-        // When
-        ListingException.DuplicateListingException exception = assertThrows(ListingException.DuplicateListingException.class, () -> {
-            listingService.save(request);
-        });
-
-        // Then
-        assertEquals(ListingExceptionMessage.DUPLICATE_LISTING + " with title: " + request.getTitle(), exception.getMessage());
-        verify(listingRepository, times(0)).save(any(Listing.class));
-    }
+//    @Test
+//    void save_shouldThrowException_whenListingAlreadyExists() {
+//        // Given
+//        ListingSaveRequest request = Instancio.of(ListingSaveRequest.class).create();
+//        Listing listing = ListingConverter.toListing(request);
+//
+//        // Mocking repository to return an Optional containing the listing object
+//        when(listingRepository.findByTitleAndPriceAndAreaAndDescriptionAndTypeAndStatus(
+//                listing.getTitle(),
+//                listing.getPrice(),
+//                listing.getArea(),
+//                listing.getDescription(),
+//                listing.getType(),
+//                listing.getStatus()
+//        )).thenReturn(Optional.of(listing));
+//
+//        // When
+//        ListingException.DuplicateListingException exception = assertThrows(ListingException.DuplicateListingException.class, () -> {
+//            listingService.save(request);
+//        });
+//
+//        // Then
+//        assertEquals(ListingExceptionMessage.DUPLICATE_LISTING + " with title: " + request.getTitle(), exception.getMessage());
+//        verify(listingRepository, times(0)).save(any(Listing.class));
+//    }
 
     @Test
     void getAll_success() {

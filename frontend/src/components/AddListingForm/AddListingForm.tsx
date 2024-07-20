@@ -1,7 +1,5 @@
 "use client";
 
-// components/AddListingForm/AddListingForm.tsx
-
 import React, { useState, useEffect } from "react";
 import { showToast } from "@/lib/toast";
 import "react-toastify/dist/ReactToastify.css";
@@ -60,6 +58,7 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
       const response = await fetch(
         `/api/listings${listing ? `/${listing.id}` : ""}`,
         {
+          cache: "no-store",
           method: listing ? "PUT" : "POST",
           headers: {
             "Content-Type": "application/json",
@@ -69,12 +68,29 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
       );
 
       const result = await response.json();
+      console.log("Response from API:", result); // Log the entire response
+
       if (result.success) {
         showToast(
           `Listing ${listing ? "updated" : "created"} successfully!`,
           "success"
         );
-        onAdd(result.data); // Pass the new or updated listing data back
+
+        // Create the listing object from the response with fallbacks
+        const newListing = {
+          id: result.data?.id ?? listing?.id,
+          title: result.data?.title ?? formData.title,
+          description: result.data?.description ?? formData.description,
+          type: result.data?.type ?? selectedType,
+          status: result.data?.status ?? selectedStatus,
+          price: result.data?.price ?? formData.price,
+          area: result.data?.area ?? formData.area,
+          publishedDate: result.data?.publishedDate ?? new Date().toISOString(),
+        };
+
+        console.log("New Listing:", newListing); // Log the new listing object
+
+        onAdd(newListing); // Pass the new or updated listing data back
         onClose(); // Close the modal after adding
       } else {
         showToast(result.message, "error");

@@ -163,7 +163,7 @@ public class ListingService {
     // Update the status of a listing if it belongs to the currently authenticated user
     // if there are no data on database then throw an exception,
     // else create a ListingUpdateResponse then return it.
-    public GenericResponse<ListingUpdateResponse> updateListing(Long id, ListingUpdateRequest request, HttpServletRequest httpRequest) {
+    public GenericResponse<ListingGetResponse> updateListing(Long id, ListingUpdateRequest request, HttpServletRequest httpRequest) {
         Long userId = (Long) httpRequest.getAttribute("userId");
 
         Listing listing = listingRepository.findByIdAndUserId(id, userId).orElseThrow(() -> {
@@ -174,7 +174,7 @@ public class ListingService {
         listingRepository.save(listing.updateByRequest(request));
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_UPDATED, id));
 
-        return GenericResponse.success(ListingUpdateResponse.of(listing));
+        return GenericResponse.success(ListingConverter.toListingGetResponse(listing));
     }
 
     public GenericResponse<List<ListingGetResponse>> getAllActive() {

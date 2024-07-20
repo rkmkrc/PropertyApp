@@ -5,6 +5,7 @@ import Carousel from "@/components/Carousel/Carousel"; // Adjust the import path
 const ListingDetailsPage = async ({ params }: { params: { id: number } }) => {
   const id = params.id;
   const fetchListing = fetch(`http://localhost:8080/api/v1/listings/${id}`, {
+    cache: "no-store",
     method: "GET",
   });
 

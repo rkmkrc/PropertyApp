@@ -338,7 +338,7 @@ public class UserService {
 
     // Check user is authenticated first,
     // then call listing service, then return the response.
-    public GenericResponse<ListingUpdateResponse> updateTheListing(Long id, ListingUpdateRequest request) {
+    public GenericResponse<ListingGetResponse> updateTheListing(Long id, ListingUpdateRequest request) {
         // Check Authentication of the user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
@@ -351,7 +351,7 @@ public class UserService {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
 
-        ListingUpdateResponse response = listingService.updateTheListing(id, request);
+        ListingGetResponse response = listingService.updateTheListing(id, request);
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.LISTING_UPDATED, request.getTitle()));
 
         return GenericResponse.success(response);

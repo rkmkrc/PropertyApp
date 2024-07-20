@@ -246,7 +246,7 @@ public class ListingController {
             }
     )
     @PutMapping("/{id}")
-    public ResponseEntity<GenericResponse<ListingUpdateResponse>> updateTheListing(@PathVariable Long id, @RequestBody ListingUpdateRequest request, HttpServletRequest httpRequest) {
+    public ResponseEntity<GenericResponse<ListingGetResponse>> updateTheListing(@PathVariable Long id, @RequestBody ListingUpdateRequest request, HttpServletRequest httpRequest) {
         return new ResponseEntity<>(listingService.updateListing(id, request, httpRequest), HttpStatus.OK);
     }
 }
