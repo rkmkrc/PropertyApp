@@ -14,17 +14,19 @@ type DashboardContentProps = {
 };
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
-  listings,
-  packages,
+  listings = [],
+  packages = [],
 }) => {
   const [filter, setFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [priceFilter, setPriceFilter] = useState("ALL");
   const [dateFilter, setDateFilter] = useState("ALL");
-  const [filteredListings, setFilteredListings] = useState(listings);
+  const [filteredListings, setFilteredListings] = useState<any[]>(listings);
 
   useEffect(() => {
-    let updatedListings = listings;
+    if (!listings) return;
+
+    let updatedListings = [...listings];
 
     if (filter !== "ALL") {
       updatedListings = updatedListings.filter(
@@ -79,7 +81,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         handleStatusFilterChange={setFilter}
         filter={filter}
       />
-      {filteredListings.length > 0 ? (
+      {filteredListings && filteredListings.length > 0 ? (
         <div className={styles.gridContainer}>
           {filteredListings.map((listing: any) => (
             <ListingCard key={listing.id} {...listing} />
@@ -104,7 +106,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           Packages <HiOutlineExternalLink className={styles.linkIcon} />
         </Link>
       </h2>
-      {packages.length > 0 ? (
+      {packages && packages.length > 0 ? (
         <div className={styles.packageGridContainer}>
           {packages.map((pkg: any) => (
             <PackageCard key={pkg.title} {...pkg} />

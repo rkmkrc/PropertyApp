@@ -8,7 +8,9 @@ type FilterSectionProps = {
   handlePriceFilterChange: (priceOrder: string) => void;
   handleDateFilterChange: (dateOrder: string) => void;
   handleStatusFilterChange: (status: string) => void;
+  handleItemsPerPageChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   filter: string;
+  itemsPerPage: number;
 };
 
 const FilterSection: React.FC<FilterSectionProps> = ({
@@ -16,7 +18,9 @@ const FilterSection: React.FC<FilterSectionProps> = ({
   handlePriceFilterChange,
   handleDateFilterChange,
   handleStatusFilterChange,
+  handleItemsPerPageChange,
   filter,
+  itemsPerPage,
 }) => {
   return (
     <div className={styles.filterContainer}>
@@ -54,6 +58,20 @@ const FilterSection: React.FC<FilterSectionProps> = ({
             <option value="ALL">All Dates</option>
             <option value="NEW_TO_OLD">New to Old</option>
             <option value="OLD_TO_NEW">Old to New</option>
+          </select>
+        </span>
+        <span className={styles.filterText}>
+          Listings per page:
+          <select
+            id="itemsPerPage"
+            className={styles.filterDropdown}
+            value={itemsPerPage}
+            onChange={handleItemsPerPageChange}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
           </select>
         </span>
       </div>

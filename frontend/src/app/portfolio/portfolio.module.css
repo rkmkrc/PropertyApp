@@ -1,5 +1,3 @@
-/* src/app/portfolio/portfolio.module.css */
-
 .portfolioPageContainer {
   display: flex;
   flex-direction: column;
@@ -12,4 +10,50 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   align-items: start;
+}
+
+.itemsPerPage {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.itemsPerPage label {
+  margin-right: 10px;
+  font-weight: 600;
+}
+
+.itemsPerPage select {
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pageButton,
+.activePageButton {
+  border: 1px solid #0070f3;
+  background-color: white;
+  color: #0070f3;
+  padding: 5px 10px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.activePageButton {
+  background-color: #0070f3;
+  color: white;
+}
+
+.pageButton:hover {
+  background-color: #0070f3;
+  color: white;
 }
