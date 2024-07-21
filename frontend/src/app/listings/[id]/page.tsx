@@ -1,4 +1,7 @@
+"use state";
 import React from "react";
+import Link from "next/link";
+import { MdArrowBackIos } from "react-icons/md";
 import styles from "./ListingDetails.module.css";
 import Carousel from "@/components/Carousel/Carousel"; // Adjust the import path as necessary
 
@@ -31,6 +34,12 @@ const ListingDetailsPage = async ({ params }: { params: { id: number } }) => {
 
   return (
     <>
+      <h3>
+        <Link href="/dashboard" className={styles.clickableHeader}>
+          <MdArrowBackIos className={styles.linkIcon} />
+          Dashboard
+        </Link>
+      </h3>
       <h1 className={styles.title}>{listing.title}</h1>
       <div className={styles.listingDetailsContainer}>
         {images.length > 0 && (

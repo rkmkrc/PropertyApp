@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { v4 as uuidv4 } from "uuid"; // Import uuid
 import styles from "./DashboardContent.module.css";
 import ListingCard from "@/components/ListingCard/ListingCard";
 import PackageCard from "@/components/PackageCard/PackageCard";
@@ -23,7 +24,12 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
   const [dateFilter, setDateFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [filteredListings, setFilteredListings] = useState<any[]>(listings);
+  const [filteredListings, setFilteredListings] = useState<any[]>(
+    listings || []
+  );
+  const [userPackages, setUserPackages] = useState<any[]>(() =>
+    (packages || []).map((pkg) => ({ ...pkg, uuid: uuidv4() }))
+  ); // Initialize with unique UUIDs
 
   useEffect(() => {
     if (!listings) return;
@@ -70,7 +76,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     setCurrentPage(1); // Reset to the first page when filters change
   }, [filter, typeFilter, priceFilter, dateFilter, listings]);
 
-  const paginatedListings = filteredListings.slice(
+  const paginatedListings = (filteredListings || []).slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -102,6 +108,16 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     setFilteredListings((prev) => prev.filter((listing) => listing.id !== id));
   };
 
+  const handleAddPackage = (newPackage: any) => {
+    setUserPackages((prev) => {
+      const packageExists = prev.some((pkg) => pkg.uuid === newPackage.uuid);
+      if (!packageExists) {
+        return [{ ...newPackage, uuid: uuidv4() }, ...prev];
+      }
+      return prev;
+    });
+  };
+
   return (
     <div className={styles.dashboardContentContainer}>
       <h2>
@@ -130,76 +146,82 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         handleItemsPerPageChange={handleItemsPerPageChange}
         itemsPerPage={itemsPerPage}
       />
-      {filteredListings && filteredListings.length > 0 ? (
-        <>
-          <div className={styles.gridContainer}>
-            {paginatedListings.map((listing: any) => (
-              <ListingCard
-                key={listing.id}
-                {...listing}
-                onAdd={handleAddListing}
-                onDelete={handleDeleteListing}
-                onUpdate={handleUpdateListing}
-              />
-            ))}
-            <ListingCard
-              isTemplate={true}
-              id={0}
-              title={""}
-              description={""}
-              type={""}
-              price={0}
-              status={""}
-              area={0}
-              publishedDate={""}
-              onAdd={handleAddListing}
-              onDelete={handleDeleteListing}
-              onUpdate={handleUpdateListing}
-            />
-          </div>
-          <div className={styles.pagination}>
-            {Array.from(
-              { length: Math.ceil(filteredListings.length / itemsPerPage) },
-              (_, i) => (
-                <button
-                  key={i + 1}
-                  className={
-                    currentPage === i + 1
-                      ? styles.activePageButton
-                      : styles.pageButton
-                  }
-                  onClick={() => handlePageChange(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              )
-            )}
-          </div>
-        </>
-      ) : (
-        <p>Listings not found</p>
+      <div className={styles.gridContainer}>
+        {paginatedListings.map((listing: any) => (
+          <ListingCard
+            key={listing.id}
+            {...listing}
+            onAdd={handleAddListing}
+            onDelete={handleDeleteListing}
+            onUpdate={handleUpdateListing}
+          />
+        ))}
+        <ListingCard
+          isTemplate={true}
+          id={0}
+          title={""}
+          description={""}
+          type={""}
+          price={0}
+          status={""}
+          area={0}
+          publishedDate={""}
+          onAdd={handleAddListing}
+          onDelete={handleDeleteListing}
+          onUpdate={handleUpdateListing}
+        />
+      </div>
+      {filteredListings && filteredListings.length > 0 && (
+        <div className={styles.pagination}>
+          {Array.from(
+            { length: Math.ceil(filteredListings.length / itemsPerPage) },
+            (_, i) => (
+              <button
+                key={i + 1}
+                className={
+                  currentPage === i + 1
+                    ? styles.activePageButton
+                    : styles.pageButton
+                }
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {i + 1}
+              </button>
+            )
+          )}
+        </div>
       )}
       <h2>
         <Link href="/packages" className={styles.clickableHeader}>
           Packages <HiOutlineExternalLink className={styles.linkIcon} />
         </Link>
       </h2>
-      {packages && packages.length > 0 ? (
-        <div className={styles.packageGridContainer}>
-          {packages.map((pkg: any) => (
-            <PackageCard key={pkg.title} {...pkg} />
-          ))}
+      <div className={styles.packageGridContainer}>
+        {userPackages && userPackages.length > 0 ? (
+          <>
+            {userPackages.map((pkg: any) => (
+              <PackageCard key={pkg.uuid} {...pkg} />
+            ))}
+            <PackageCard
+              isTemplate={true}
+              title={"Buy a package"}
+              description={""}
+              type={""}
+              expirationDate={""}
+              onAddPackage={handleAddPackage} // Pass handleAddPackage to PackageCard
+            />
+          </>
+        ) : (
           <PackageCard
             isTemplate={true}
             title={"Buy a package"}
             description={""}
             type={""}
             expirationDate={""}
+            onAddPackage={handleAddPackage} // Pass handleAddPackage to PackageCard
           />
-        </div>
-      ) : (
-        <p>Packages not found</p>
-      )}
+        )}
+      </div>
     </div>
   );
 };

@@ -19,13 +19,6 @@ const PackagesPageClient: React.FC<PackagesPageClientProps> = ({
           {packages.map((pkg: any) => (
             <PackageCard key={pkg.title} {...pkg} />
           ))}
-          <PackageCard
-            isTemplate={true}
-            title={"Buy a package"}
-            description={""}
-            type={""}
-            expirationDate={""}
-          />
         </div>
       ) : (
         <p>Packages not found</p>

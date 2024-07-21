@@ -7,11 +7,12 @@ import { showToast } from "@/lib/toast";
 
 type BuyPackageFormProps = {
   onClose: () => void;
+  onAddPackage?: (newPackage: any) => void;
 };
 
 const packages = [
   {
-    name: "STANDARD",
+    name: "Standard Package",
     code: "STANDARD",
     icon: <FaStar />,
     description: "You will be able to publish 10 listings with this package",
@@ -20,7 +21,7 @@ const packages = [
     price: 29.99,
   },
   {
-    name: "HYPE ME",
+    name: "Hype Me Package",
     code: "HYPE_ME",
     icon: <FaRocket />,
     description: "You will be able to publish 40 listings with this package",
@@ -29,7 +30,7 @@ const packages = [
     price: 99.99,
   },
   {
-    name: "PRO",
+    name: "PRO Package",
     code: "PRO",
     icon: <FaGem />,
     description: "You will be able to publish 25 listings with this package",
@@ -38,7 +39,7 @@ const packages = [
     price: 49.99,
   },
   {
-    name: "SHOW ME AT FIRST PAGE",
+    name: "Show Me At First Page Package",
     code: "SHOW_ME_AT_FIRST_PAGE",
     icon: <FaFireAlt />,
     description: "Your listings will be shown on the first page",
@@ -48,8 +49,12 @@ const packages = [
   },
 ];
 
-const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
+const BuyPackageForm: React.FC<BuyPackageFormProps> = ({
+  onClose,
+  onAddPackage,
+}) => {
   const [selectedPackage, setSelectedPackage] = useState(packages[0]);
+  const [isPurchasing, setIsPurchasing] = useState(false); // Added state to prevent multiple submissions
 
   const handlePackageSelection = (pkg: (typeof packages)[0]) => {
     setSelectedPackage(pkg);
@@ -57,7 +62,9 @@ const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
 
   const handlePurchase = async (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log("BIY");
+    if (isPurchasing) return; // Prevent multiple submissions
+    setIsPurchasing(true); // Set purchasing state to true
+
     try {
       const response = await fetch(`/api/users/packages`, {
         method: "POST",
@@ -70,12 +77,24 @@ const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
       const result = await response.json();
       if (result.success) {
         showToast(`Package purchased successfully!`, "success");
+        if (onAddPackage) {
+          onAddPackage({
+            title: selectedPackage.name,
+            type: selectedPackage.code,
+            description: selectedPackage.description,
+            expirationDate: new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            ).toISOString(), // Example expiration date
+          });
+        }
         onClose(); // Close the modal after adding
       } else {
         showToast(result.message, "error");
       }
     } catch (error) {
       showToast(`An error occurred: ${error}`, "error");
+    } finally {
+      setIsPurchasing(false); // Reset purchasing state
     }
   };
 
@@ -109,8 +128,9 @@ const BuyPackageForm: React.FC<BuyPackageFormProps> = ({ onClose }) => {
         type="button"
         onClick={handlePurchase}
         className={styles.submitButton}
+        disabled={isPurchasing} // Disable button while purchasing
       >
-        Purchase
+        {isPurchasing ? "Purchasing..." : "Purchase"}
       </button>
     </div>
   );
