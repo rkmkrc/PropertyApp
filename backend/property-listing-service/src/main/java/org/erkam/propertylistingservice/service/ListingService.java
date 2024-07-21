@@ -122,7 +122,6 @@ public class ListingService {
     // This method checks for a duplicate listing in repository
     // returns true if give listing parameter is exactly the same except the id field of a listing.
     private boolean isDuplicate(Listing listing) {
-        System.out.println("IN IS DUPLICATE");
         return listingRepository.findByTitleAndPriceAndAreaAndDescriptionAndType(
                 listing.getTitle(),
                 listing.getPrice(),
