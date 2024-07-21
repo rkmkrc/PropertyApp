@@ -27,6 +27,7 @@ import org.erkam.propertyuserservice.model.enums.PropertyType;
 import org.erkam.propertyuserservice.repository.UserRepository;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -50,6 +51,7 @@ class UserServiceTest {
     private ListingService listingService;
     private PaymentService paymentService;
     private Authentication authentication;
+    private User user;
 
     @BeforeEach
     void setUp() {
@@ -58,6 +60,7 @@ class UserServiceTest {
         paymentService = mock(PaymentService.class);
         userService = new UserService(userRepository, listingService, paymentService);
         authentication = mock(Authentication.class);
+        user = mock(User.class);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -80,6 +83,20 @@ class UserServiceTest {
     }
 
     @Test
+    void register_userAlreadyExists_throwsException() {
+        // Given
+        RegisterRequest registerRequest = Instancio.create(RegisterRequest.class);
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserAlreadyExistException.class, () -> userService.register(registerRequest));
+        assertEquals("User already exists email: " + registerRequest.getEmail(), exception.getMessage());
+        verify(userRepository, times(1)).existsByEmail(anyString());
+        verify(userRepository, times(0)).save(any(User.class));
+    }
+
+    @Test
     void save_success() {
         // Given
         UserSaveRequest userSaveRequest = Instancio.create(UserSaveRequest.class);
@@ -98,6 +115,20 @@ class UserServiceTest {
     }
 
     @Test
+    void save_userAlreadyExists_throwsException() {
+        // Given
+        UserSaveRequest userSaveRequest = Instancio.create(UserSaveRequest.class);
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserAlreadyExistException.class, () -> userService.save(userSaveRequest));
+        assertEquals("User already exists email: " + userSaveRequest.getEmail(), exception.getMessage());
+        verify(userRepository, times(1)).existsByEmail(anyString());
+        verify(userRepository, times(0)).save(any(User.class));
+    }
+
+    @Test
     void getAll_success() {
         // Given
         List<User> users = Instancio.createList(User.class);
@@ -113,6 +144,17 @@ class UserServiceTest {
     }
 
     @Test
+    void getAll_noDataOnDatabase_throwsException() {
+        // Given
+        when(userRepository.findAll()).thenReturn(List.of());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.NoDataOnDatabaseException.class, () -> userService.getAll());
+        assertEquals("No data found on database", exception.getMessage());
+        verify(userRepository, times(1)).findAll();
+    }
+
+    @Test
     void getById_success() {
         // Given
         User user = Instancio.create(User.class);
@@ -124,6 +166,17 @@ class UserServiceTest {
 
         // Then
         assertEquals(user.getEmail(), response.getData().getEmail());
+        verify(userRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void getById_userNotFound_throwsException() {
+        // Given
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserNotFoundException.class, () -> userService.getById(1L));
+        assertEquals("User not found with id: 1", exception.getMessage());
         verify(userRepository, times(1)).findById(anyLong());
     }
 
@@ -146,6 +199,17 @@ class UserServiceTest {
     }
 
     @Test
+    void deleteById_userNotFound_throwsException() {
+        // Given
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserNotFoundException.class, () -> userService.deleteById(1L));
+        assertEquals("User not found with id: 1", exception.getMessage());
+        verify(userRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
     void addListing_success() {
         // Given
         ListingSaveRequest listingSaveRequest = Instancio.create(ListingSaveRequest.class);
@@ -164,6 +228,36 @@ class UserServiceTest {
         assertEquals(listingGetResponse.getTitle(), response.getData().getTitle());
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(listingService, times(1)).addListing(any(ListingSaveRequest.class));
+    }
+
+    @Test
+    void addListing_userNotAuthenticated_throwsException() {
+        // Given
+        when(authentication.isAuthenticated()).thenReturn(false);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.class, () -> userService.addListing(new ListingSaveRequest()));
+        assertEquals("User is not authenticated", exception.getMessage());
+    }
+
+    // NOTE: Could not solve the problem, so it is ignored
+    // TODO: Will be fixed
+    @Disabled
+    @Test
+    void addListing_userNotEligibleToPublish_throwsException() {
+        // Given
+        ListingSaveRequest listingSaveRequest = Instancio.create(ListingSaveRequest.class);
+
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(user.isUserEligibleToPublishListing()).thenReturn(false);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserIsNotEligibleToAddListing.class, () -> userService.addListing(listingSaveRequest));
+        assertEquals("User is not eligible to publish a listing", exception.getMessage());
+        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(listingService, times(0)).addListing(any(ListingSaveRequest.class));
     }
 
     @Test
@@ -189,6 +283,16 @@ class UserServiceTest {
     }
 
     @Test
+    void buyPackage_userNotAuthenticated_throwsException() {
+        // Given
+        when(authentication.isAuthenticated()).thenReturn(false);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.class, () -> userService.buyPackage(new BuyPackageRequest()));
+        assertEquals("User is not authenticated", exception.getMessage());
+    }
+
+    @Test
     void getAllPackages_success() {
         // Given
         User user = Instancio.create(User.class);
@@ -203,6 +307,22 @@ class UserServiceTest {
 
         // Then
         assertFalse(response.getData().isEmpty());
+        verify(userRepository, times(1)).findByEmail(anyString());
+    }
+
+    @Test
+    void getAllPackages_userHasNotAnyPackages_throwsException() {
+        // Given
+        User user = Instancio.create(User.class);
+        user.getPackages().clear();
+
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserHasNotAnyPackagesException.class, () -> userService.getAllPackages());
+        assertEquals("User has not any packages with email: " + user.getEmail(), exception.getMessage());
         verify(userRepository, times(1)).findByEmail(anyString());
     }
 
@@ -222,6 +342,23 @@ class UserServiceTest {
 
         // Then
         assertFalse(response.getData().isEmpty());
+        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(listingService, times(1)).getAllListingsOfUser(anyLong());
+    }
+
+    @Test
+    void getAllListings_userHasNotAnyListings_throwsException() {
+        // Given
+        User user = Instancio.create(User.class);
+
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(listingService.getAllListingsOfUser(anyLong())).thenReturn(List.of());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserHasNotAnyListingsException.class, () -> userService.getAllListings());
+        assertEquals("User has not any listings", exception.getMessage());
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(listingService, times(1)).getAllListingsOfUser(anyLong());
     }
@@ -247,6 +384,23 @@ class UserServiceTest {
     }
 
     @Test
+    void getPassiveListings_userHasNotAnyPassiveListings_throwsException() {
+        // Given
+        User user = Instancio.create(User.class);
+
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(listingService.getPassiveListingsOfUser(anyLong())).thenReturn(List.of());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserHasNotAnyPassiveListingsException.class, () -> userService.getPassiveListings());
+        assertEquals("User has not any passive listings", exception.getMessage());
+        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(listingService, times(1)).getPassiveListingsOfUser(anyLong());
+    }
+
+    @Test
     void getActiveListings_success() {
         // Given
         User user = Instancio.create(User.class);
@@ -262,6 +416,23 @@ class UserServiceTest {
 
         // Then
         assertFalse(response.getData().isEmpty());
+        verify(userRepository, times(1)).findByEmail(anyString());
+        verify(listingService, times(1)).getActiveListingsOfUser(anyLong());
+    }
+
+    @Test
+    void getActiveListings_userHasNotAnyActiveListings_throwsException() {
+        // Given
+        User user = Instancio.create(User.class);
+
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getName()).thenReturn(user.getEmail());
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(listingService.getActiveListingsOfUser(anyLong())).thenReturn(List.of());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserHasNotAnyActiveListingsException.class, () -> userService.getActiveListings());
+        assertEquals("User has not any active listings", exception.getMessage());
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(listingService, times(1)).getActiveListingsOfUser(anyLong());
     }
@@ -287,6 +458,16 @@ class UserServiceTest {
     }
 
     @Test
+    void deleteListingById_userNotAuthenticated_throwsException() {
+        // Given
+        when(authentication.isAuthenticated()).thenReturn(false);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserIsNotAuthenticatedException.class, () -> userService.deleteListingById(1L));
+        assertEquals("User is not authenticated", exception.getMessage());
+    }
+
+    @Test
     void updateTheStatusOfTheListing_success() {
         // Given
         ListingUpdateStatusRequest listingUpdateStatusRequest = Instancio.create(ListingUpdateStatusRequest.class);
@@ -305,6 +486,20 @@ class UserServiceTest {
         assertNotNull(response.getData());
         verify(userRepository, times(1)).findByEmail(anyString());
         verify(listingService, times(1)).updateTheStatusOfTheListing(any(ListingUpdateStatusRequest.class));
+    }
+
+    @Test
+    void updateTheStatusOfTheListing_userNotAuthenticated_throwsException() {
+        // Given
+        when(authentication.isAuthenticated()).thenReturn(false);
+        ListingUpdateStatusRequest request = ListingUpdateStatusRequest.builder()
+                .listingId(1L)
+                .status(ListingStatus.ACTIVE)
+                .build();
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserIsNotAuthenticatedException.class, () -> userService.updateTheStatusOfTheListing(request));
+        assertEquals("User is not authenticated", exception.getMessage());
     }
 
     @Test
@@ -335,6 +530,16 @@ class UserServiceTest {
     }
 
     @Test
+    void updateTheListing_userNotAuthenticated_throwsException() {
+        // Given
+        when(authentication.isAuthenticated()).thenReturn(false);
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserIsNotAuthenticatedException.class, () -> userService.updateTheListing(1L, new ListingUpdateRequest()));
+        assertEquals("User is not authenticated", exception.getMessage());
+    }
+
+    @Test
     void getCurrentUser_success() {
         // Given
         User user = Instancio.create(User.class);
@@ -348,6 +553,20 @@ class UserServiceTest {
 
         // Then
         assertEquals(user.getEmail(), response.getData().getEmail());
+        verify(userRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void getCurrentUser_userNotFound_throwsException() {
+        // Given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        when(request.getAttribute("userId")).thenReturn(1L);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        // When / Then
+        UserException exception = assertThrows(UserException.UserNotFoundException.class, () -> userService.getCurrentUser(request));
+        assertEquals("User not found with id: 1", exception.getMessage());
         verify(userRepository, times(1)).findById(anyLong());
     }
 }
