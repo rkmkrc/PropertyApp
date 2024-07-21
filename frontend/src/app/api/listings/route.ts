@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
   const addListingUrl = `http://localhost:8080/api/v1/users/listings`;
 
   const response = await fetch(addListingUrl, {
+    cache: "no-store",
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -89,6 +90,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
   const response = await fetch(updateListingUrl, {
     method: 'PUT',
+    cache: "no-store",
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

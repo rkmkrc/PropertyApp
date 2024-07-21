@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
 
   const response = await fetch(addListingUrl, {
     method: 'POST',
+    cache: "no-store",
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,

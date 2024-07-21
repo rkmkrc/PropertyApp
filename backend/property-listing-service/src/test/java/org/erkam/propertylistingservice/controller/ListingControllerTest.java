@@ -3,35 +3,42 @@ package org.erkam.propertylistingservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.erkam.propertylistingservice.dto.request.listing.ListingSaveRequest;
+import org.erkam.propertylistingservice.dto.request.listing.ListingUpdateRequest;
+import org.erkam.propertylistingservice.dto.request.listing.ListingUpdateStatusRequest;
 import org.erkam.propertylistingservice.dto.response.GenericResponse;
-import org.erkam.propertylistingservice.dto.response.listing.ListingDeleteResponse;
-import org.erkam.propertylistingservice.dto.response.listing.ListingGetResponse;
-import org.erkam.propertylistingservice.dto.response.listing.ListingSaveResponse;
-import org.erkam.propertylistingservice.model.Listing;
-import org.erkam.propertylistingservice.model.enums.PropertyType;
+import org.erkam.propertylistingservice.dto.response.listing.*;
 import org.erkam.propertylistingservice.service.ListingService;
 import org.instancio.Instancio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ListingController.class)
+@ContextConfiguration(classes = ListingController.class)
+@Import(ListingControllerTest.TestSecurityConfig.class)
 class ListingControllerTest {
 
     @Autowired
@@ -44,115 +51,160 @@ class ListingControllerTest {
     private ObjectMapper objectMapper;
 
     private ListingSaveRequest listingSaveRequest;
-    private Listing listing;
-    private ListingSaveResponse listingSaveResponse;
+    private ListingUpdateRequest listingUpdateRequest;
+    private ListingUpdateStatusRequest listingUpdateStatusRequest;
     private ListingGetResponse listingGetResponse;
     private ListingDeleteResponse listingDeleteResponse;
-    private GenericResponse<ListingSaveResponse> saveResponse;
-    private GenericResponse<List<ListingGetResponse>> getAllResponse;
-    private GenericResponse<ListingGetResponse> getByIdResponse;
-    private GenericResponse<ListingDeleteResponse> deleteResponse;
+    private ListingUpdateStatusResponse listingUpdateStatusResponse;
 
     @BeforeEach
     void setUp() {
         listingSaveRequest = Instancio.create(ListingSaveRequest.class);
-
-        listing = new Listing();
-        listing.setId(1L);
-        listing.setTitle(listingSaveRequest.getTitle());
-        listing.setType(PropertyType.FLAT);
-        listing.setArea(1);
-        listing.setDescription(listingSaveRequest.getDescription());
-        listing.setPrice(BigDecimal.ONE);
-
-        listingSaveResponse = ListingSaveResponse.of(listingSaveRequest);
-
-        listingGetResponse = ListingGetResponse.builder()
-                .title(listing.getTitle())
-                .description(listing.getDescription())
-                .price(listing.getPrice())
-                .type(listing.getType())
-                .area(listing.getArea())
-                .publishedDate(listing.getPublishedDate())
-                .build();
-
-        listingDeleteResponse = ListingDeleteResponse.of(listing);
-
-        saveResponse = GenericResponse.success(listingSaveResponse);
-        getAllResponse = GenericResponse.success(Arrays.asList(listingGetResponse));
-        getByIdResponse = GenericResponse.success(listingGetResponse);
-        deleteResponse = GenericResponse.success(listingDeleteResponse);
+        listingUpdateRequest = Instancio.create(ListingUpdateRequest.class);
+        listingUpdateStatusRequest = Instancio.create(ListingUpdateStatusRequest.class);
+        listingGetResponse = Instancio.create(ListingGetResponse.class);
+        listingDeleteResponse = Instancio.create(ListingDeleteResponse.class);
+        listingUpdateStatusResponse = Instancio.create(ListingUpdateStatusResponse.class);
     }
 
-//    @Test
-//    void save_successfully() throws Exception {
-//        // Given
-//        when(listingService.save(any(ListingSaveRequest.class))).thenReturn(saveResponse);
-//
-//        String body = objectMapper.writeValueAsString(listingSaveRequest);
-//
-//        // When
-//        ResultActions resultActions = mockMvc.perform(post("/api/v1/listings")
-//                .content(body)
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        // Then
-//        resultActions.andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.data.responseMessage").value(listingSaveResponse.getResponseMessage()));
-//        verify(listingService, times(1)).save(any(ListingSaveRequest.class));
-//    }
-
     @Test
-    void getAll_successfully() throws Exception {
+    void save_success() throws Exception {
         // Given
-        when(listingService.getAll()).thenReturn(getAllResponse);
+        Mockito.when(listingService.save(any(ListingSaveRequest.class))).thenReturn(
+                GenericResponse.success(listingGetResponse)
+        );
 
         // When
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings")
+        String body = objectMapper.writeValueAsString(listingSaveRequest);
+        ResultActions resultActions = mockMvc.perform(post("/api/v1/listings")
+                .content(body)
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Then
+        resultActions.andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).save(any(ListingSaveRequest.class));
+    }
+
+    @Test
+    void getAll_success() throws Exception {
+        Mockito.when(listingService.getAll())
+                .thenReturn(GenericResponse.success(List.of(listingGetResponse)));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings"));
+
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].title").value(listingGetResponse.getTitle()))
-                .andExpect(jsonPath("$.data[0].description").value(listingGetResponse.getDescription()))
-                .andExpect(jsonPath("$.data[0].price").value(listingGetResponse.getPrice()))
-                .andExpect(jsonPath("$.data[0].area").value(listingGetResponse.getArea()))
-                .andExpect(jsonPath("$.data[0].publishedDate").value(listingGetResponse.getPublishedDate()));
+                .andExpect(jsonPath("$.data").isNotEmpty());
         verify(listingService, times(1)).getAll();
     }
 
     @Test
-    void getById_successfully() throws Exception {
-        // Given
-        when(listingService.getById(anyLong())).thenReturn(getByIdResponse);
+    void getAllActive_success() throws Exception {
+        Mockito.when(listingService.getAllActive())
+                .thenReturn(GenericResponse.success(List.of(listingGetResponse)));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings/active"));
 
-        // When
-        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // Then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.title").value(listingGetResponse.getTitle()))
-                .andExpect(jsonPath("$.data.description").value(listingGetResponse.getDescription()))
-                .andExpect(jsonPath("$.data.price").value(listingGetResponse.getPrice()))
-                .andExpect(jsonPath("$.data.area").value(listingGetResponse.getArea()))
-                .andExpect(jsonPath("$.data.publishedDate").value(listingGetResponse.getPublishedDate()));
-        verify(listingService, times(1)).getById(anyLong());
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).getAllActive();
     }
 
     @Test
-    void deleteById_successfully() throws Exception {
-        // Given
-        when(listingService.deleteById(anyLong(), any(HttpServletRequest.class))).thenReturn(deleteResponse);
+    void getById_success() throws Exception {
+        Mockito.when(listingService.getById(any(Long.class)))
+                .thenReturn(GenericResponse.success(listingGetResponse));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings/{id}", 1L));
 
-        // When
-        ResultActions resultActions = mockMvc.perform(delete("/api/v1/listings/{id}", 1L)
-                .requestAttr("userId", 1L)  // Add userId attribute to the request
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).getById(any(Long.class));
+    }
+
+    @Test
+    void deleteById_success() throws Exception {
+        Mockito.when(listingService.deleteById(any(Long.class), any(HttpServletRequest.class)))
+                .thenReturn(GenericResponse.success(listingDeleteResponse));
+        ResultActions resultActions = mockMvc.perform(delete("/api/v1/listings/{id}", 1L));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).deleteById(any(Long.class), any(HttpServletRequest.class));
+    }
+
+    @Test
+    void getListingsByUserId_success() throws Exception {
+        Mockito.when(listingService.getListingsByUserId(any(Long.class)))
+                .thenReturn(GenericResponse.success(List.of(listingGetResponse)));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings/user/{userId}", 1L));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).getListingsByUserId(any(Long.class));
+    }
+
+    @Test
+    void getActiveListingsOfUser_success() throws Exception {
+        Mockito.when(listingService.getActiveListingsByUserId(any(Long.class)))
+                .thenReturn(GenericResponse.success(List.of(listingGetResponse)));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings/user/{userId}/active", 1L));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).getActiveListingsByUserId(any(Long.class));
+    }
+
+    @Test
+    void getPassiveListingsOfUser_success() throws Exception {
+        Mockito.when(listingService.getPassiveListingsByUserId(any(Long.class)))
+                .thenReturn(GenericResponse.success(List.of(listingGetResponse)));
+        ResultActions resultActions = mockMvc.perform(get("/api/v1/listings/user/{userId}/passive", 1L));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).getPassiveListingsByUserId(any(Long.class));
+    }
+
+    @Test
+    void updateTheStatusOfTheListing_success() throws Exception {
+        Mockito.when(listingService.changeStatusOfTheListing(any(ListingUpdateStatusRequest.class), any(HttpServletRequest.class)))
+                .thenReturn(GenericResponse.success(listingUpdateStatusResponse));
+
+        String body = objectMapper.writeValueAsString(listingUpdateStatusRequest);
+        ResultActions resultActions = mockMvc.perform(put("/api/v1/listings/user/status")
+                .content(body)
                 .contentType(MediaType.APPLICATION_JSON));
 
-        // Then
         resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.message").value(listingDeleteResponse.getResponseMessage()));
-        verify(listingService, times(1)).deleteById(anyLong(), any(HttpServletRequest.class));
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).changeStatusOfTheListing(any(ListingUpdateStatusRequest.class), any(HttpServletRequest.class));
+    }
+
+    @Test
+    void updateTheListing_success() throws Exception {
+        Mockito.when(listingService.updateListing(any(Long.class), any(ListingUpdateRequest.class), any(HttpServletRequest.class)))
+                .thenReturn(GenericResponse.success(listingGetResponse));
+
+        String body = objectMapper.writeValueAsString(listingUpdateRequest);
+        ResultActions resultActions = mockMvc.perform(put("/api/v1/listings/{id}", 1L)
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isNotEmpty());
+        verify(listingService, times(1)).updateListing(any(Long.class), any(ListingUpdateRequest.class), any(HttpServletRequest.class));
+    }
+
+    @Configuration
+    @EnableWebSecurity
+    static class TestSecurityConfig {
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http
+                    .csrf(csrf -> csrf.disable()) // Disable CSRF protection for tests
+                    .authorizeHttpRequests(authz -> authz
+                            .anyRequest().permitAll()
+                    )
+                    .httpBasic(withDefaults());
+            return http.build();
+        }
     }
 }

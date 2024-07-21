@@ -24,6 +24,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
   const deleteListingUrl = `http://localhost:8080/api/v1/users/listings/${id}`;
 
   const response = await fetch(deleteListingUrl, {
+    cache: "no-store",
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -85,6 +86,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
   const response = await fetch(updateListingUrl, {
     method: 'PUT',
+    cache: "no-store",
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
