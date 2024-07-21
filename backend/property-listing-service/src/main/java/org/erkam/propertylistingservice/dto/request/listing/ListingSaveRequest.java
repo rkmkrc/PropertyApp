@@ -1,14 +1,14 @@
 package org.erkam.propertylistingservice.dto.request.listing;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.erkam.propertylistingservice.model.enums.PropertyType;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class ListingSaveRequest {
     private Long userId;

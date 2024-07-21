@@ -1,5 +1,6 @@
 package org.erkam.propertyuserservice.dto.response.listing;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.erkam.propertyuserservice.model.enums.ListingStatus;
 import org.erkam.propertyuserservice.model.enums.PropertyType;
@@ -20,5 +21,6 @@ public class ListingGetResponse {
     private BigDecimal price;
     private ListingStatus status;
     private Integer area;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate publishedDate;
 }

@@ -27,14 +27,32 @@ import java.util.List;
 public class ListingService {
     private final ListingClient listingClient;
 
-    public ListingSaveResponse addListing(ListingSaveRequest request) {
+    public ListingGetResponse addListing(ListingSaveRequest request) {
+        log.debug("Request to listing service: {}", request);
 
-        ResponseEntity<GenericResponse<ListingSaveResponse>> response = listingClient.save(request);
+        ResponseEntity<GenericResponse<ListingGetResponse>> response;
+        try {
+            response = listingClient.save(request);
+            log.debug("Raw response from listing service: {}", response);
+            log.debug("Response body from listing service: {}", response.getBody());
+        } catch (IllegalArgumentException ex) {
+            log.error("Illegal argument exception: {}", ex.getMessage(), ex);
+            throw new IllegalStateException("Error invoking listingClient.save(request): " + ex.getMessage(), ex);
+        } catch (Exception e) {
+            log.error("Exception occurred while calling listing service: {}", e.getMessage(), e);
+            throw new UserException.ListingCouldNotCreatedException("Error while calling listing service");
+        }
+
+        if (response == null || response.getBody() == null) {
+            log.error("Response or response body is null");
+            throw new UserException.ListingCouldNotCreatedException("Null response from listing service");
+        }
+
         if (!response.getStatusCode().is2xxSuccessful()) {
-            log.error(LogMessage.generate(MessageStatus.NEG, UserExceptionMessage.LISTING_COULD_NOT_CREATED));
-            log.error(LogMessage.generate(MessageStatus.NEG, response.getBody().getMessage()));
+            log.error("Listing could not be created: {}", response.getBody().getMessage());
             throw new UserException.ListingCouldNotCreatedException(response.getBody().getMessage());
         }
+
         return response.getBody().getData();
     }
 

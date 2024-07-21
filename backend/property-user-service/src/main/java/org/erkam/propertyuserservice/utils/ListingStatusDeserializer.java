@@ -20,6 +20,8 @@ public class ListingStatusDeserializer extends JsonDeserializer<ListingStatus> {
                 return ListingStatus.ACTIVE;
             case "PASSIVE":
                 return ListingStatus.PASSIVE;
+            case "IN_REVIEW":
+                return ListingStatus.IN_REVIEW;
             default:
                 throw new ListingException.InvalidTypeOfStatusException(ListingExceptionMessage.INVALID_TYPE_OF_STATUS, value);
         }

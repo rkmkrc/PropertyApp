@@ -68,7 +68,6 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
       );
 
       const result = await response.json();
-      console.log("Response from API:", result); // Log the entire response
 
       if (result.success) {
         showToast(
@@ -76,16 +75,19 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
           "success"
         );
 
+        const data = result.data.data; // Extract data from result
+        console.log("Data of Response from API:", data); // Log the data object
+
         // Create the listing object from the response with fallbacks
         const newListing = {
-          id: result.data?.id ?? listing?.id,
-          title: result.data?.title ?? formData.title,
-          description: result.data?.description ?? formData.description,
-          type: result.data?.type ?? selectedType,
-          status: result.data?.status ?? selectedStatus,
-          price: result.data?.price ?? formData.price,
-          area: result.data?.area ?? formData.area,
-          publishedDate: result.data?.publishedDate ?? new Date().toISOString(),
+          id: data?.id ?? listing?.id,
+          title: data?.title ?? formData.title,
+          description: data?.description ?? formData.description,
+          type: data?.type ?? selectedType,
+          status: data?.status ?? selectedStatus,
+          price: data?.price ?? formData.price,
+          area: data?.area ?? formData.area,
+          publishedDate: data?.publishedDate ?? new Date().toISOString(),
         };
 
         console.log("New Listing:", newListing); // Log the new listing object
@@ -96,6 +98,7 @@ const AddListingForm: React.FC<AddListingFormProps> = ({
         showToast(result.message, "error");
       }
     } catch (error) {
+      console.error("Error during listing creation/update:", error);
       showToast(
         `An error occurred during listing ${listing ? "update" : "creation"}`,
         "error"

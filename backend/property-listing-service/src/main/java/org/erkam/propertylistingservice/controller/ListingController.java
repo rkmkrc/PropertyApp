@@ -43,7 +43,7 @@ public class ListingController {
             }
     )
     @PostMapping
-    public ResponseEntity<GenericResponse<ListingSaveResponse>> save(@RequestBody ListingSaveRequest request) {
+    public ResponseEntity<GenericResponse<ListingGetResponse>> save(@RequestBody ListingSaveRequest request, HttpServletRequest httpRequest) {
         return new ResponseEntity<>(listingService.save(request), HttpStatus.CREATED);
     }
 

@@ -173,7 +173,7 @@ public class UserController {
             }
     )
     @PostMapping("/listings")
-    public ResponseEntity<GenericResponse<ListingSaveResponse>> addListing(@RequestBody ListingSaveRequest request) {
+    public ResponseEntity<GenericResponse<ListingGetResponse>> addListing(@RequestBody ListingSaveRequest request) {
             return new ResponseEntity<>(userService.addListing(request), HttpStatus.CREATED);
     }
 

@@ -1,13 +1,13 @@
 package org.erkam.propertyuserservice.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.erkam.propertyuserservice.constants.PropertyAppConstants;
 import org.springframework.http.HttpStatus;
 
-@Data
+@Getter
+@Setter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class GenericResponse<T> {
     private boolean success;

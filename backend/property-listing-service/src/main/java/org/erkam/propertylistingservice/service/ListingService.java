@@ -1,5 +1,7 @@
 package org.erkam.propertylistingservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +36,7 @@ public class ListingService {
     // add the listing to the listing review queue to let Listing Review Service to change the
     // status from IN_REVIEW to ACTIVE
     // then save it return a ListingSaveResponse
-    public GenericResponse<ListingSaveResponse> save(ListingSaveRequest request) {
+    public GenericResponse<ListingGetResponse> save(ListingSaveRequest request) {
         Listing listing = ListingConverter.toListing(request);
         if (isDuplicate(listing)) {
             log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.DUPLICATE_LISTING, request.getTitle()));
@@ -44,9 +46,27 @@ public class ListingService {
 
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_CREATED, request.getTitle()));
         listingReviewProducer.sendNotification(new ListingDto(listing.getId()));
-        return GenericResponse.success(ListingSaveResponse.of(request));
+        ListingGetResponse response = ListingConverter.toListingGetResponse(listing);
+        return GenericResponse.success(response);
     }
 
+    // This method requires authentication
+    // Update the status of a listing if it belongs to the currently authenticated user
+    // if there are no data on database then throw an exception,
+    // else create a ListingUpdateResponse then return it.
+    public GenericResponse<ListingGetResponse> updateListing(Long id, ListingUpdateRequest request, HttpServletRequest httpRequest) {
+        Long userId = (Long) httpRequest.getAttribute("userId");
+
+        Listing listing = listingRepository.findByIdAndUserId(id, userId).orElseThrow(() -> {
+            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id));
+            return new ListingException.ListingNotFoundOrYouDontHavePermissionException(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id);
+        });
+
+        listingRepository.save(listing.updateByRequest(request));
+        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_UPDATED, id));
+
+        return GenericResponse.success(ListingConverter.toListingGetResponse(listing));
+    }
     // Get all listings from database if there is no data on database then throw an exception,
     // else convert listings to ListingGetResponse list then return it.
     public GenericResponse<List<ListingGetResponse>> getAll() {
@@ -157,24 +177,6 @@ public class ListingService {
         log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_STATUS_UPDATED, request.getListingId()));
 
         return GenericResponse.success(ListingUpdateStatusResponse.of(request));
-    }
-
-    // This method requires authentication
-    // Update the status of a listing if it belongs to the currently authenticated user
-    // if there are no data on database then throw an exception,
-    // else create a ListingUpdateResponse then return it.
-    public GenericResponse<ListingGetResponse> updateListing(Long id, ListingUpdateRequest request, HttpServletRequest httpRequest) {
-        Long userId = (Long) httpRequest.getAttribute("userId");
-
-        Listing listing = listingRepository.findByIdAndUserId(id, userId).orElseThrow(() -> {
-            log.error(LogMessage.generate(MessageStatus.NEG, ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id));
-            return new ListingException.ListingNotFoundOrYouDontHavePermissionException(ListingExceptionMessage.LISTING_NOT_FOUND_OR_YOU_DONT_HAVE_PERMISSION, id);
-        });
-
-        listingRepository.save(listing.updateByRequest(request));
-        log.info(LogMessage.generate(MessageStatus.POS, ListingSuccessMessage.LISTING_UPDATED, id));
-
-        return GenericResponse.success(ListingConverter.toListingGetResponse(listing));
     }
 
     public GenericResponse<List<ListingGetResponse>> getAllActive() {

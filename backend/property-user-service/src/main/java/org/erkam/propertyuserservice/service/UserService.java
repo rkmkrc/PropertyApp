@@ -29,9 +29,12 @@ import org.erkam.propertyuserservice.dto.response.product.BuyPackageResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserDeleteResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserGetResponse;
 import org.erkam.propertyuserservice.dto.response.user.UserSaveResponse;
+import org.erkam.propertyuserservice.exception.listing.ListingException;
+import org.erkam.propertyuserservice.exception.listing.ListingExceptionMessage;
 import org.erkam.propertyuserservice.exception.user.UserException;
 import org.erkam.propertyuserservice.exception.user.UserExceptionMessage;
 import org.erkam.propertyuserservice.model.User;
+import org.erkam.propertyuserservice.model.enums.ListingStatus;
 import org.erkam.propertyuserservice.repository.UserRepository;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -129,7 +132,7 @@ public class UserService {
 
     // First check is user authenticated, and has package
     // then request to listing service by feign client
-    public GenericResponse<ListingSaveResponse> addListing(ListingSaveRequest request) {
+    public GenericResponse<ListingGetResponse> addListing(ListingSaveRequest request) {
 
         // Check Authentication of the user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -152,7 +155,7 @@ public class UserService {
 
         // Request to Listing Service
         request.setUserId(user.getId());
-        ListingSaveResponse response = listingService.addListing(request);
+        ListingGetResponse response = listingService.addListing(request);
 
         // Reduce the users quota by one
         user.reducePublishingQuotaByOne();
@@ -350,6 +353,11 @@ public class UserService {
         String userEmail = authentication.getName();
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new UserException.UserNotFoundException(UserExceptionMessage.USER_NOT_FOUND, userEmail));
+
+        // Check if the status is either ACTIVE or PASSIVE
+        if (request.getStatus() != ListingStatus.ACTIVE && request.getStatus() != ListingStatus.PASSIVE) {
+            throw new ListingException.InvalidTypeOfStatusException(ListingExceptionMessage.INVALID_TYPE_OF_STATUS, request.getStatus().name());
+        }
 
         ListingGetResponse response = listingService.updateTheListing(id, request);
         log.info(LogMessage.generate(MessageStatus.POS, UserSuccessMessage.LISTING_UPDATED, request.getTitle()));

@@ -20,7 +20,7 @@ import java.util.List;
 public interface ListingClient {
 
     @PostMapping
-    ResponseEntity<GenericResponse<ListingSaveResponse>> save(@RequestBody ListingSaveRequest request);
+    ResponseEntity<GenericResponse<ListingGetResponse>> save(@RequestBody ListingSaveRequest request);
 
     @GetMapping("/user/{userId}")
     ResponseEntity<GenericResponse<List<ListingGetResponse>>> getListingsByUserId(@PathVariable Long userId);
