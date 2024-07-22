@@ -15,6 +15,34 @@ Property App with Spring and Next.js.
 - [Configuration](#configuration)
 - [Contributing](#contributing)
 - [License](#license)
+## Screenshots
+
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <img width="1426" alt="ss1" src="https://github.com/user-attachments/assets/513dd475-48f3-4ce2-af23-99f1bf0e786c">
+      </td>
+      <td>
+        <img width="1426" alt="ss2" src="https://github.com/user-attachments/assets/8f17f480-9bae-4df1-adf0-c2a4ff31ebb5">
+      </td>
+      <td>
+        <img width="1426" alt="ss3" src="https://github.com/user-attachments/assets/5b8bfd19-7e4d-4ea2-8fa5-e2006313e748">
+      </td>
+      <td>
+        <img width="1426" alt="ss4" src="https://github.com/user-attachments/assets/2db6c788-5aa1-44a6-9b81-74249ae31178">
+      </td>
+      <td>
+        <img width="1426" alt="ss5" src="https://github.com/user-attachments/assets/1ab6dc98-1b21-49af-bf19-779835d293ad">
+      </td>
+      <td>
+        <img width="1426" alt="ss6" src="https://github.com/user-attachments/assets/c1268b90-65b7-4155-a45f-583958ef92ad">
+      </td>
+    </tr>
+  </table>
+</div>
+
+
 
 ## Prerequisites
 
