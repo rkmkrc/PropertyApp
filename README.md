@@ -41,6 +41,7 @@ Ensure you have the following installed on your machine:
 
 #### 4. Database Setup (PostgreSQL)        
 Pull the PostgreSQL Docker image:
+
     docker pull postgres:latest
     docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=yourpassword -e POSTGRES_DB=yourdatabase postgres
 
