@@ -23,8 +23,6 @@ const UserProfile: React.FC<User> = ({ name, surname, email, phoneNumber }) => {
       <div className={styles.profileDetails}>
         <div className={styles.header}>
           <h2>{`${name} ${surname}`}</h2>
-          <button className={styles.editButton}>Edit Profile</button>
-          <button className={styles.publicViewButton}>Public View</button>
         </div>
         <div className={styles.email}>
           Email: {email}

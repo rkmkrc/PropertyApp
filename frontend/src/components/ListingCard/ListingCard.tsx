@@ -22,6 +22,7 @@ type Listing = {
   onAdd?: (listing: Listing) => void;
   onDelete?: (id: number) => void;
   onUpdate?: (listing: Listing) => void;
+  isEditable?: boolean; // Add isEditable prop
 };
 
 const formatPrice = (price: number | undefined) => {
@@ -42,6 +43,7 @@ const ListingCard: React.FC<Listing> = ({
   onAdd,
   onDelete,
   onUpdate,
+  isEditable = false, // Default isEditable to false
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -118,7 +120,7 @@ const ListingCard: React.FC<Listing> = ({
       onMouseLeave={() => setIsHovering(false)}
       onClick={handleCardClick}
     >
-      {isHovering && !isTemplate && (
+      {isHovering && isEditable && !isTemplate && (
         <>
           <div className={styles.deleteButton} onClick={handleDelete}>
             <FaTrashAlt />
@@ -164,22 +166,24 @@ const ListingCard: React.FC<Listing> = ({
           </p>
         </div>
       </div>
-      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
-        <AddListingForm
-          onClose={handleModalClose}
-          onAdd={handleUpdate}
-          listing={{
-            id,
-            title,
-            description,
-            type,
-            status,
-            price,
-            area,
-            publishedDate,
-          }}
-        />
-      </Modal>
+      {isEditable && (
+        <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+          <AddListingForm
+            onClose={handleModalClose}
+            onAdd={handleUpdate}
+            listing={{
+              id,
+              title,
+              description,
+              type,
+              status,
+              price,
+              area,
+              publishedDate,
+            }}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

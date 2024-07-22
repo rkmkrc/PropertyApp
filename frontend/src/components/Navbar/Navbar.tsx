@@ -12,7 +12,7 @@ const Navbar = () => {
     <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
         <Link href="/" className={styles.logo}>
-          MyApp
+          Property App
         </Link>
         <ul className={styles.navLinks}>
           {isAuthenticated ? (

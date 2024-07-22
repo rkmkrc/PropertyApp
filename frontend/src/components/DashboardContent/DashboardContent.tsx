@@ -149,6 +149,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
       <div className={styles.gridContainer}>
         {paginatedListings.map((listing: any) => (
           <ListingCard
+            isEditable={true}
             key={listing.id}
             {...listing}
             onAdd={handleAddListing}
